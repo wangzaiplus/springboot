@@ -1,4 +1,4 @@
-package com.wangzaiplus.test.constant;
+package com.wangzaiplus.test.common;
 
 public class Constant {
 
@@ -13,6 +13,8 @@ public class Constant {
 
         // 过期时间, 一天
         int EXPIRE_TIME_DAY = 60 * 60 * 24;
+
+        String TOKEN_PREFIX = "token:";
     }
 
 }
