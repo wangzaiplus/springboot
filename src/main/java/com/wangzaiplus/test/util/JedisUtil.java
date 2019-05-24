@@ -1,6 +1,6 @@
 package com.wangzaiplus.test.util;
 
-import com.wangzaiplus.test.constant.Constant;
+import com.wangzaiplus.test.common.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
