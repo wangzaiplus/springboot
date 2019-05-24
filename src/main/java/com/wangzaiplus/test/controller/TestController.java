@@ -24,13 +24,6 @@ public class TestController {
         log.info(jedisUtil.setObject("ddd", "ddd", 30));
         log.info(jedisUtil.getObject("ccc").toString());
 
-        log.info(jedisUtil.keys("ccc").toString());
-
-        log.info(jedisUtil.expire("aaa", 30) + "");
-        log.info(jedisUtil.ttl("aaa") + "");
-        log.info(jedisUtil.exists("aaa") + "");
-        log.info(jedisUtil.exists("aaaaaa") + "");
-
         return "hello world";
     }
 
