@@ -24,7 +24,11 @@ public class UserController {
     @GetMapping("{id}")
     public String getOne(@PathVariable Integer id) {
         User user = userService.getOne(id);
-        return user + "";
+        if (null != user) {
+            return user.toString();
+        } else {
+            return "not exists";
+        }
     }
 
     @PostMapping

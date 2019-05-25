@@ -16,17 +16,8 @@ public class TestController {
 
     @RequestMapping("jedis")
     public String jedis() {
-        log.info(jedisUtil.set("aaa", "aaa"));
-        log.info(jedisUtil.set("bbb", "bbb", 10));
-        log.info(jedisUtil.get("aaa"));
-
-        log.info(jedisUtil.setObject("ccc", "ccc"));
-        log.info(jedisUtil.setObject("ddd", "ddd", 30));
-        log.info(jedisUtil.getObject("ccc").toString());
-
+        log.info(jedisUtil.exists("aaa") + "");
         return "hello world";
     }
-
-
 
 }
