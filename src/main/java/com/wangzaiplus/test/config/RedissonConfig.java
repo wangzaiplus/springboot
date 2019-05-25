@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+@Configuration
 public class RedissonConfig {
 
     @Value("${spring.redis.host}")
@@ -19,7 +19,7 @@ public class RedissonConfig {
     @Value("${spring.redis.password}")
     private String password;
 
-//    @Bean
+    @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://" + host + ":" + port).setPassword(password);
