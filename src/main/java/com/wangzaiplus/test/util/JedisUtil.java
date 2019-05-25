@@ -26,11 +26,14 @@ public class JedisUtil {
      * @return
      */
     public String set(String key, String value) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.set(key, value);
         } catch (Exception e) {
             throw new RuntimeException("set异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -43,8 +46,9 @@ public class JedisUtil {
      * @return
      */
     public String set(String key, String value, int expireTime) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             String result = jedis.set(key, value);
             if (Constant.Redis.OK.equals(result)) {
                 jedis.expire(key, expireTime);
@@ -52,6 +56,8 @@ public class JedisUtil {
             return result;
         } catch (Exception e) {
             throw new RuntimeException("set-expireTime异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -62,11 +68,14 @@ public class JedisUtil {
      * @return
      */
     public String get(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.get(key);
         } catch (Exception e) {
             throw new RuntimeException("get异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -78,11 +87,14 @@ public class JedisUtil {
      * @return
      */
     public String setObject(String key, Object value) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.set(key.getBytes(), SerializableUtil.serializable(value));
         } catch (Exception e) {
             throw new RuntimeException("setObject异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -95,8 +107,9 @@ public class JedisUtil {
      * @return
      */
     public String setObject(String key, Object value, int expireTime) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             String result = jedis.set(key.getBytes(), SerializableUtil.serializable(value));
             if (Constant.Redis.OK.equals(result)) {
                 jedis.expire(key.getBytes(), expireTime);
@@ -104,6 +117,8 @@ public class JedisUtil {
             return result;
         } catch (Exception e) {
             throw new RuntimeException("setObject-expireTime异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -114,8 +129,9 @@ public class JedisUtil {
      * @return
      */
     public Object getObject(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             byte[] bytes = jedis.get(key.getBytes());
             if (null == bytes || bytes.length <= 0) {
                 return null;
@@ -123,6 +139,8 @@ public class JedisUtil {
             return SerializableUtil.unserializable(bytes);
         } catch (Exception e) {
             throw new RuntimeException("getObject异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -133,11 +151,14 @@ public class JedisUtil {
      * @return
      */
     public Long del(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.del(key.getBytes());
         } catch (Exception e) {
             throw new RuntimeException("del异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -148,11 +169,14 @@ public class JedisUtil {
      * @return
      */
     public Boolean exists(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.exists(key.getBytes());
         } catch (Exception e) {
             throw new RuntimeException("exists异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -164,11 +188,14 @@ public class JedisUtil {
      * @return
      */
     public long expire(String key, int seconds) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.expire(key.getBytes(), seconds);
         } catch (Exception e) {
             throw new RuntimeException("keys异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -179,11 +206,14 @@ public class JedisUtil {
      * @return
      */
     public Set<String> keys(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.keys(key);
         } catch (Exception e) {
             throw new RuntimeException("keys异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
         }
     }
 
@@ -194,11 +224,20 @@ public class JedisUtil {
      * @return
      */
     public Long ttl(String key) {
+        Jedis jedis = null;
         try {
-            Jedis jedis = getJedis();
+            jedis = getJedis();
             return jedis.ttl(key);
         } catch (Exception e) {
             throw new RuntimeException("ttl异常: key: " + key + ", cause: " + e.getMessage());
+        } finally {
+            close(jedis);
+        }
+    }
+
+    public void close(Jedis jedis) {
+        if (null != jedis) {
+            jedis.close();
         }
     }
 

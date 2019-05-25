@@ -7,11 +7,13 @@ import com.wangzaiplus.test.exception.ServiceException;
 import com.wangzaiplus.test.service.TokenService;
 import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.RandomUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class TokenServiceImpl implements TokenService {
 
     @Autowired
