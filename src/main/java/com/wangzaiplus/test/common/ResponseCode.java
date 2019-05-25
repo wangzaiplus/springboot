@@ -5,9 +5,9 @@ package com.wangzaiplus.test.common;
  */
 public enum ResponseCode {
 
-    SUCCESS(0, "Success"),
-    ERROR(1, "Error"),
-    SERVER_ERROR(500, "Server error"),
+    SUCCESS(0, "操作成功"),
+    ERROR(1, "操作失败"),
+    SERVER_ERROR(500, "服务器异常"),
 
     ILLEGAL_ARGUMENT(10000, "参数不合法"),
     NEED_LOGIN(10001, "登录失效"),
