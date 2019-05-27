@@ -1,7 +1,5 @@
 package com.wangzaiplus.test.controller;
 
-import com.wangzaiplus.test.annotation.ApiIdempotent;
-import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +52,6 @@ public class UserController {
     public String getByUsernameAndPassword(String username, String password) {
         List<User> users = userService.getByUsernameAndPassword(username, password);
         return users.toString();
-    }
-
-    @ApiIdempotent
-    @PostMapping("testIdempotence")
-    public ServerResponse testIdempotence() {
-        return userService.testIdempotence();
     }
 
 }

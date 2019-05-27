@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
 /**
- * 接口幂等性
+ * 接口幂等性拦截器
  */
 public class ApiIdempotentInterceptor implements HandlerInterceptor {
 
@@ -31,7 +31,7 @@ public class ApiIdempotentInterceptor implements HandlerInterceptor {
 
         ApiIdempotent methodAnnotation = method.getAnnotation(ApiIdempotent.class);
         if (methodAnnotation != null) {
-            checkApiIdempotent(request);
+            checkApiIdempotent(request);// 幂等性校验, 校验通过则放行, 校验失败则抛出异常, 并通过统一异常处理返回友好提示
         }
 
         return true;
