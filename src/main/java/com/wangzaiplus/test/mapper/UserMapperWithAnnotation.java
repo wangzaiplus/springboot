@@ -6,7 +6,7 @@ import org.apache.ibatis.type.JdbcType;
 
 import java.util.List;
 
-public interface UserMapper2 {
+public interface UserMapperWithAnnotation {
 
     @Select("select * from user")
     @Results({
