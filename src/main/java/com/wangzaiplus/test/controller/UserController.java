@@ -1,5 +1,6 @@
 package com.wangzaiplus.test.controller;
 
+import com.wangzaiplus.test.annotation.ApiIdempotent;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.UserService;
@@ -55,9 +56,10 @@ public class UserController {
         return users.toString();
     }
 
+    @ApiIdempotent
     @PostMapping("testIdempotence")
-    public ServerResponse testIdempotence(String token) {
-        return userService.testIdempotence(token);
+    public ServerResponse testIdempotence() {
+        return userService.testIdempotence();
     }
 
 }

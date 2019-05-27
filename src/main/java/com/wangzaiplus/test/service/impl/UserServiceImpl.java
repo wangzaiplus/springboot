@@ -60,28 +60,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServerResponse testIdempotence(String token) {
-        if (StringUtils.isBlank(token)) {
-            throw new ServiceException(ResponseCode.ILLEGAL_ARGUMENT.getMsg());
-        }
-
-        RLock lock = null;
-        try {
-            lock = redissonClient.getLock("testRedissonLock");
-            lock.lock();
-
-            if (!jedisUtil.exists(token)) {
-                return ServerResponse.error(ResponseCode.REPETITIVE_OPERATION.getMsg());
-            }
-
-            jedisUtil.del(token);
-
-            return ServerResponse.success(ResponseCode.SUCCESS.getMsg());
-        } finally {
-            if (null != lock) {
-                lock.unlock();
-            }
-        }
+    public ServerResponse testIdempotence() {
+        return ServerResponse.success("okkkkkkkkkkkkkkkkkkkkkk");
     }
 
 }
