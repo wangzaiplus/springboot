@@ -1,8 +1,11 @@
 package com.wangzaiplus.test.controller;
 
-import com.wangzaiplus.test.util.JedisUtil;
+import com.wangzaiplus.test.annotation.ApiIdempotent;
+import com.wangzaiplus.test.common.ServerResponse;
+import com.wangzaiplus.test.service.TestService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    private JedisUtil jedisUtil;
+    private TestService testService;
 
-    @RequestMapping("jedis")
-    public String jedis() {
-        log.info(jedisUtil.exists("aaa") + "");
-        return "hello world";
+    @ApiIdempotent
+    @PostMapping("testIdempotence")
+    public ServerResponse testIdempotence() {
+        return testService.testIdempotence();
     }
 
 }
