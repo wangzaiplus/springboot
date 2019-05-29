@@ -1,14 +1,13 @@
 package com.wangzaiplus.test.util;
 
-import com.wangzaiplus.test.common.Constant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.util.Set;
-
 @Component
+@Slf4j
 public class JedisUtil {
 
     @Autowired
@@ -31,7 +30,8 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.set(key, value);
         } catch (Exception e) {
-            throw new RuntimeException("set异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("set key:{} value:{} error", key, value, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -49,13 +49,10 @@ public class JedisUtil {
         Jedis jedis = null;
         try {
             jedis = getJedis();
-            String result = jedis.set(key, value);
-            if (Constant.Redis.OK.equals(result)) {
-                jedis.expire(key, expireTime);
-            }
-            return result;
+            return jedis.setex(key, expireTime, value);
         } catch (Exception e) {
-            throw new RuntimeException("set-expireTime异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("set key:{} value:{} expireTime:{} error", key, value, expireTime, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -73,72 +70,8 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.get(key);
         } catch (Exception e) {
-            throw new RuntimeException("get异常: key: " + key + ", cause: " + e.getMessage());
-        } finally {
-            close(jedis);
-        }
-    }
-
-    /**
-     * 设值-object
-     *
-     * @param key
-     * @param value
-     * @return
-     */
-    public String setObject(String key, Object value) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
-            return jedis.set(key.getBytes(), SerializableUtil.serializable(value));
-        } catch (Exception e) {
-            throw new RuntimeException("setObject异常: key: " + key + ", cause: " + e.getMessage());
-        } finally {
-            close(jedis);
-        }
-    }
-
-    /**
-     * 设值-object-expireTime
-     *
-     * @param key
-     * @param value
-     * @param expireTime 过期时间, 单位: s
-     * @return
-     */
-    public String setObject(String key, Object value, int expireTime) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
-            String result = jedis.set(key.getBytes(), SerializableUtil.serializable(value));
-            if (Constant.Redis.OK.equals(result)) {
-                jedis.expire(key.getBytes(), expireTime);
-            }
-            return result;
-        } catch (Exception e) {
-            throw new RuntimeException("setObject-expireTime异常: key: " + key + ", cause: " + e.getMessage());
-        } finally {
-            close(jedis);
-        }
-    }
-
-    /**
-     * 取值-object
-     *
-     * @param key
-     * @return
-     */
-    public Object getObject(String key) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
-            byte[] bytes = jedis.get(key.getBytes());
-            if (null == bytes || bytes.length <= 0) {
-                return null;
-            }
-            return SerializableUtil.unserializable(bytes);
-        } catch (Exception e) {
-            throw new RuntimeException("getObject异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("get key:{} error", key, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -156,7 +89,8 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.del(key.getBytes());
         } catch (Exception e) {
-            throw new RuntimeException("del异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("del key:{} error", key, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -174,7 +108,8 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.exists(key.getBytes());
         } catch (Exception e) {
-            throw new RuntimeException("exists异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("exists key:{} error", key, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -184,34 +119,17 @@ public class JedisUtil {
      * 设值key过期时间
      *
      * @param key
-     * @param seconds
+     * @param expireTime 过期时间, 单位: s
      * @return
      */
-    public long expire(String key, int seconds) {
+    public Long expire(String key, int expireTime) {
         Jedis jedis = null;
         try {
             jedis = getJedis();
-            return jedis.expire(key.getBytes(), seconds);
+            return jedis.expire(key.getBytes(), expireTime);
         } catch (Exception e) {
-            throw new RuntimeException("keys异常: key: " + key + ", cause: " + e.getMessage());
-        } finally {
-            close(jedis);
-        }
-    }
-
-    /**
-     * 模糊查询获取key集合
-     *
-     * @param key
-     * @return
-     */
-    public Set<String> keys(String key) {
-        Jedis jedis = null;
-        try {
-            jedis = getJedis();
-            return jedis.keys(key);
-        } catch (Exception e) {
-            throw new RuntimeException("keys异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("expire key:{} error", key, e);
+            return null;
         } finally {
             close(jedis);
         }
@@ -229,13 +147,14 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.ttl(key);
         } catch (Exception e) {
-            throw new RuntimeException("ttl异常: key: " + key + ", cause: " + e.getMessage());
+            log.error("ttl key:{} error", key, e);
+            return null;
         } finally {
             close(jedis);
         }
     }
 
-    public void close(Jedis jedis) {
+    private void close(Jedis jedis) {
         if (null != jedis) {
             jedis.close();
         }
