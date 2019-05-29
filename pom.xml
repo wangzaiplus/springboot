@@ -85,6 +85,13 @@
 			<version>26.0-jre</version>
 		</dependency>
 
+		<!--joda time-->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.10</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
