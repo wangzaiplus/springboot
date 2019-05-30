@@ -1,5 +1,6 @@
 package com.wangzaiplus.test;
 
+import com.wangzaiplus.test.interceptor.AccessLimitInterceptor;
 import com.wangzaiplus.test.interceptor.ApiIdempotentInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -39,12 +40,20 @@ public class TestApplication  extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		// 接口幂等性拦截器
 		registry.addInterceptor(apiIdempotentInterceptor());
+		// 接口防刷限流拦截器
+		registry.addInterceptor(accessLimitInterceptor());
+
 		super.addInterceptors(registry);
 	}
 
 	@Bean
 	public ApiIdempotentInterceptor apiIdempotentInterceptor() {
 		return new ApiIdempotentInterceptor();
+	}
+
+	@Bean
+	public AccessLimitInterceptor accessLimitInterceptor() {
+		return new AccessLimitInterceptor();
 	}
 
 }

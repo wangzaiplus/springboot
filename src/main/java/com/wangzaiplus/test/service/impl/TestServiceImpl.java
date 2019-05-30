@@ -9,7 +9,12 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public ServerResponse testIdempotence() {
-        return ServerResponse.success("操作成功");
+        return ServerResponse.success("testIdempotence: success");
+    }
+
+    @Override
+    public ServerResponse accessLimit() {
+        return ServerResponse.success("accessLimit: success");
     }
 
 }

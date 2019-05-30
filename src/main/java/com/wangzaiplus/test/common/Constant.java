@@ -15,6 +15,8 @@ public class Constant {
         int EXPIRE_TIME_DAY = 60 * 60 * 24;
 
         String TOKEN_PREFIX = "token:";
+
+        String ACCESS_LIMIT_PREFIX = "accessLimit:";
     }
 
 }

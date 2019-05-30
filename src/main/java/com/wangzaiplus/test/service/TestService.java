@@ -6,4 +6,6 @@ public interface TestService {
 
     ServerResponse testIdempotence();
 
+    ServerResponse accessLimit();
+
 }

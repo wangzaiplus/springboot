@@ -24,7 +24,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public ServerResponse createToken() {
-        String str = RandomUtil.generateStr(24);
+        String str = RandomUtil.UUID32();
         StrBuilder token = new StrBuilder();
         token.append(Constant.Redis.TOKEN_PREFIX).append(str);
 
