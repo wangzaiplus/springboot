@@ -1,5 +1,6 @@
 package com.wangzaiplus.test.controller;
 
+import com.wangzaiplus.test.annotation.AccessLimit;
 import com.wangzaiplus.test.annotation.ApiIdempotent;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.service.TestService;
@@ -21,6 +22,12 @@ public class TestController {
     @PostMapping("testIdempotence")
     public ServerResponse testIdempotence() {
         return testService.testIdempotence();
+    }
+
+    @AccessLimit(maxCount = 5, seconds = 5)
+    @PostMapping("accessLimit")
+    public ServerResponse accessLimit() {
+        return testService.accessLimit();
     }
 
 }

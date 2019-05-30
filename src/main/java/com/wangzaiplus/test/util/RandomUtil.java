@@ -1,6 +1,7 @@
 package com.wangzaiplus.test.util;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class RandomUtil {
 
@@ -9,6 +10,15 @@ public class RandomUtil {
     public static final String letterChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public static final String numberChar = "0123456789";
+
+    public static String UUID32() {
+        String str = UUID.randomUUID().toString();
+        return str.replaceAll("-", "");
+    }
+
+    public static String UUID36() {
+        return UUID.randomUUID().toString();
+    }
 
     /**
      * 生成包含大、小写字母、数字的字符串

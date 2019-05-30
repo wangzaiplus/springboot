@@ -12,6 +12,7 @@ public enum ResponseCode {
     ILLEGAL_ARGUMENT(10000, "参数不合法"),
     NEED_LOGIN(10001, "登录失效"),
     REPETITIVE_OPERATION(10002, "请勿重复操作"),
+    ACCESS_LIMIT(10003, "请求太频繁, 请稍后再试"),
     ;
 
     ResponseCode(Integer code, String msg) {
