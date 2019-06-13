@@ -92,6 +92,12 @@
 			<version>2.10</version>
 		</dependency>
 
+		<!--amqp-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
