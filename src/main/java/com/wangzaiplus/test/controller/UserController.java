@@ -1,5 +1,6 @@
 package com.wangzaiplus.test.controller;
 
+import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +49,9 @@ public class UserController {
         return "nice";
     }
 
-    @GetMapping("users/username_password")
-    public String getByUsernameAndPassword(String username, String password) {
-        List<User> users = userService.getByUsernameAndPassword(username, password);
-        return users.toString();
+    @PostMapping("login")
+    public ServerResponse login(String username, String password) {
+        return userService.login(username, password);
     }
 
 }
