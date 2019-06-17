@@ -2,9 +2,11 @@ package com.wangzaiplus.test.config;
 
 import com.wangzaiplus.test.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +22,21 @@ public class RabbitConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
-        connectionFactory.setPublisherConfirms(true);
-        connectionFactory.setPublisherReturns(true);
-
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(converter());
-        rabbitTemplate.setMandatory(true);// 使用return-callback时必须设置mandatory为true
 
+        // 消息是否成功发送到Exchange
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
-                log.info("消息发送成功: correlationData: {}", correlationData);
+                log.info("消息成功发送到Exchange");
             } else {
-                log.info("消息发送失败: correlationData: {}, cause: {}", correlationData, cause);
+                log.info("消息发送到Exchange失败: cause: {}", correlationData, cause);
             }
         });
 
+        // 消息是否从Exchange路由到Queue, 注意: 这是一个失败回调, 只有消息从Exchange路由到Queue失败才会回调这个方法
         rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            log.info("消息丢失: exchange: {}, route: {}, replyCode: {}, replyText: {}, message: {}", exchange, routingKey, replyCode, replyText, message);
+            log.info("消息从Exchange路由到Queue失败: exchange: {}, route: {}, replyCode: {}, replyText: {}, message: {}", exchange, routingKey, replyCode, replyText, message);
         });
 
         return rabbitTemplate;

@@ -14,7 +14,7 @@
         id, user_id, type, description, create_time, update_time
     </sql>
 
-    <insert id="insert" parameterType="com.wangzaiplus.test.pojo.User">
+    <insert id="insert" parameterType="com.wangzaiplus.test.pojo.UserLog">
         INSERT INTO user_log(user_id, type, description, create_time, update_time)
         VALUES (#{userId}, #{type}, #{description}, #{createTime}, #{updateTime})
     </insert>

@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
         rabbitTemplate.convertAndSend(ConfigUtil.getValue("log.user.exchange.name"), ConfigUtil.getValue("log.user.routing.key.name"), userLog);
 
-        return ServerResponse.success(ResponseCode.SUCCESS);
+        return ServerResponse.success();
     }
 
 }
