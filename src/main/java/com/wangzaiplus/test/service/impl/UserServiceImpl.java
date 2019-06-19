@@ -1,20 +1,18 @@
 package com.wangzaiplus.test.service.impl;
 
+import com.wangzaiplus.test.amqp.consumer.MessageHelper;
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ResponseCode;
 import com.wangzaiplus.test.common.ServerResponse;
-import com.wangzaiplus.test.mapper.UserLogMapper;
+import com.wangzaiplus.test.config.RabbitConfig;
 import com.wangzaiplus.test.mapper.UserMapper;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.pojo.UserLog;
 import com.wangzaiplus.test.service.UserService;
-import com.wangzaiplus.test.util.ConfigUtil;
 import com.wangzaiplus.test.util.JodaTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,9 +77,11 @@ public class UserServiceImpl implements UserService {
         userLog.setCreateTime(new Date());
         userLog.setUpdateTime(new Date());
 
-        rabbitTemplate.convertAndSend(ConfigUtil.getValue("log.user.exchange.name"), ConfigUtil.getValue("log.user.routing.key.name"), userLog);
+        rabbitTemplate.convertAndSend(RabbitConfig.LOG_USER_EXCHANGE_NAME, RabbitConfig.LOG_USER_ROUTING_KEY_NAME, MessageHelper.objToMsg(userLog));
 
         return ServerResponse.success();
     }
+
+
 
 }

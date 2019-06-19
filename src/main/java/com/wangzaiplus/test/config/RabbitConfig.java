@@ -1,6 +1,5 @@
 package com.wangzaiplus.test.config;
 
-import com.wangzaiplus.test.util.ConfigUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -19,6 +18,10 @@ public class RabbitConfig {
 
     @Autowired
     private CachingConnectionFactory connectionFactory;
+
+    public static final String LOG_USER_QUEUE_NAME = "log.user.queue";
+    public static final String LOG_USER_EXCHANGE_NAME = "log.user.exchange";
+    public static final String LOG_USER_ROUTING_KEY_NAME = "log.user.routing.key";
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
@@ -49,17 +52,17 @@ public class RabbitConfig {
 
     @Bean
     public Queue logUserQueue() {
-        return new Queue(ConfigUtil.getValue("log.user.queue.name"), true);
+        return new Queue(LOG_USER_QUEUE_NAME, true);
     }
 
     @Bean
     public DirectExchange logUserExchange() {
-        return new DirectExchange(ConfigUtil.getValue("log.user.exchange.name"), true, false);
+        return new DirectExchange(LOG_USER_EXCHANGE_NAME, true, false);
     }
 
     @Bean
     public Binding logUserBinding() {
-        return BindingBuilder.bind(logUserQueue()).to(logUserExchange()).with(ConfigUtil.getValue("log.user.routing.key.name"));
+        return BindingBuilder.bind(logUserQueue()).to(logUserExchange()).with(LOG_USER_ROUTING_KEY_NAME);
     }
 
 }

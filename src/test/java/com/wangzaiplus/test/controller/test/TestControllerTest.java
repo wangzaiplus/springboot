@@ -16,8 +16,9 @@ public class TestControllerTest {
 
     @Test
     public void testLogin() {
-        String str = testRestTemplate.postForObject("/user/login?username={username}&password={password}", null, String.class, "wangzaiplus", "123456");
-        System.out.println(str);
+        for (int i = 0; i < 100; i++) {
+            testRestTemplate.postForObject("/user/login?username={username}&password={password}", null, String.class, "wangzaiplus", "123456");
+        }
     }
 
 }
