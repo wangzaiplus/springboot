@@ -1,5 +1,8 @@
 package com.wangzaiplus.test.config;
 
+import com.wangzaiplus.test.common.Constant;
+import com.wangzaiplus.test.mapper.MsgLogMapper;
+import com.wangzaiplus.test.pojo.MsgLog;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -12,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Date;
+
 @Configuration
 @Slf4j
 public class RabbitConfig {
@@ -19,9 +24,12 @@ public class RabbitConfig {
     @Autowired
     private CachingConnectionFactory connectionFactory;
 
-    public static final String LOG_USER_QUEUE_NAME = "log.user.queue";
-    public static final String LOG_USER_EXCHANGE_NAME = "log.user.exchange";
-    public static final String LOG_USER_ROUTING_KEY_NAME = "log.user.routing.key";
+    @Autowired
+    private MsgLogMapper msgLogMapper;
+
+    public static final String LOGIN_LOG_QUEUE_NAME = "login.log.queue";
+    public static final String LOGIN_LOG_EXCHANGE_NAME = "login.log.exchange";
+    public static final String LOGIN_LOG_ROUTING_KEY_NAME = "login.log.routing.key";
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
@@ -32,6 +40,12 @@ public class RabbitConfig {
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
                 log.info("消息成功发送到Exchange");
+
+                String msgId = correlationData.getId();
+                MsgLog msgLog = new MsgLog();
+                msgLog.setMsgId(msgId);
+                msgLog.setStatus(Constant.MsgLogStatus.SUCCESS);
+                msgLogMapper.updateStatus(msgLog);
             } else {
                 log.info("消息发送到Exchange失败: cause: {}", correlationData, cause);
             }
@@ -52,17 +66,17 @@ public class RabbitConfig {
 
     @Bean
     public Queue logUserQueue() {
-        return new Queue(LOG_USER_QUEUE_NAME, true);
+        return new Queue(LOGIN_LOG_QUEUE_NAME, true);
     }
 
     @Bean
     public DirectExchange logUserExchange() {
-        return new DirectExchange(LOG_USER_EXCHANGE_NAME, true, false);
+        return new DirectExchange(LOGIN_LOG_EXCHANGE_NAME, true, false);
     }
 
     @Bean
     public Binding logUserBinding() {
-        return BindingBuilder.bind(logUserQueue()).to(logUserExchange()).with(LOG_USER_ROUTING_KEY_NAME);
+        return BindingBuilder.bind(logUserQueue()).to(logUserExchange()).with(LOGIN_LOG_ROUTING_KEY_NAME);
     }
 
 }

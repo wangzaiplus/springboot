@@ -1,9 +1,9 @@
-package com.wangzaiplus.test.amqp.consumer;
+package com.wangzaiplus.test.amqp;
 
 import com.rabbitmq.client.Channel;
 import com.wangzaiplus.test.config.RabbitConfig;
-import com.wangzaiplus.test.pojo.UserLog;
-import com.wangzaiplus.test.service.UserLogService;
+import com.wangzaiplus.test.pojo.LoginLog;
+import com.wangzaiplus.test.service.LoginLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -19,13 +19,18 @@ import java.io.IOException;
 public class LogUserConsumer {
 
     @Autowired
-    UserLogService userLogService;
+    LoginLogService loginLogService;
 
-    @RabbitListener(queues = RabbitConfig.LOG_USER_QUEUE_NAME)
+    @RabbitListener(queues = RabbitConfig.LOGIN_LOG_QUEUE_NAME)
     public void logUserConsumer(Message message, Channel channel, @Header (AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         try {
             log.info("收到消息: {}", message.toString());
-            userLogService.insert(MessageHelper.msgToObj(message, UserLog.class));
+
+            LoginLog loginLog = MessageHelper.msgToObj(message, LoginLog.class);
+            LoginLog lLog = loginLogService.selectByMsgId(loginLog.getMsgId());
+            if (null == lLog) {// 消费幂等性
+                loginLogService.insert(loginLog);
+            }
         } catch (Exception e){
             log.error("logUserConsumer error", e);
             channel.basicNack(tag, false, true);

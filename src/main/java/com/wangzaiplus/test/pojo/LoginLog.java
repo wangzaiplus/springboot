@@ -10,12 +10,13 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserLog implements Serializable {
+public class LoginLog implements Serializable {
 
     private static final long serialVersionUID = 9035584359424322830L;
 
     private Integer id;
     private Integer userId;
+    private String msgId;
     private Integer type;
     private String description;
     private Date createTime;

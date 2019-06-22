@@ -1,17 +1,22 @@
 package com.wangzaiplus.test.service.impl;
 
-import com.wangzaiplus.test.amqp.consumer.MessageHelper;
+import com.wangzaiplus.test.amqp.MessageHelper;
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ResponseCode;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.config.RabbitConfig;
+import com.wangzaiplus.test.mapper.MsgLogMapper;
 import com.wangzaiplus.test.mapper.UserMapper;
+import com.wangzaiplus.test.pojo.MsgLog;
 import com.wangzaiplus.test.pojo.User;
-import com.wangzaiplus.test.pojo.UserLog;
+import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.service.UserService;
 import com.wangzaiplus.test.util.JodaTimeUtil;
+import com.wangzaiplus.test.util.JsonUtil;
+import com.wangzaiplus.test.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private MsgLogMapper msgLogMapper;
 
     @Override
     public List<User> getAll() {
@@ -70,18 +78,39 @@ public class UserServiceImpl implements UserService {
             return ServerResponse.error(ResponseCode.USERNAME_OR_PASSWORD_WRONG.getMsg());
         }
 
-        UserLog userLog = new UserLog();
-        userLog.setUserId(user.getId());
-        userLog.setType(Constant.LogType.LOGIN);
-        userLog.setDescription(username + "在" + JodaTimeUtil.dateToStr(new Date()) + "登录系统");
-        userLog.setCreateTime(new Date());
-        userLog.setUpdateTime(new Date());
-
-        rabbitTemplate.convertAndSend(RabbitConfig.LOG_USER_EXCHANGE_NAME, RabbitConfig.LOG_USER_ROUTING_KEY_NAME, MessageHelper.objToMsg(userLog));
+        saveAndSendMsg(user);
 
         return ServerResponse.success();
     }
 
+    /**
+     * 保存并发送消息
+     * @param user
+     */
+    private void saveAndSendMsg(User user) {
+        LoginLog loginLog = new LoginLog();
 
+        String msgId = RandomUtil.UUID32();
+        loginLog.setUserId(user.getId());
+        loginLog.setMsgId("");
+        loginLog.setType(Constant.LogType.LOGIN);
+        Date date = new Date();
+        loginLog.setDescription(user.getUsername() + "在" + JodaTimeUtil.dateToStr(date) + "登录系统");
+        loginLog.setCreateTime(date);
+        loginLog.setUpdateTime(date);
 
+        CorrelationData correlationData = new CorrelationData();
+        correlationData.setId(msgId);
+        rabbitTemplate.convertAndSend(RabbitConfig.LOGIN_LOG_EXCHANGE_NAME, RabbitConfig.LOGIN_LOG_ROUTING_KEY_NAME, MessageHelper.objToMsg(loginLog), correlationData);
+
+        MsgLog msgLog = new MsgLog();
+        msgLog.setMsgId(msgId);
+        msgLog.setMsg(JsonUtil.objToStr(loginLog));
+        msgLog.setStatus(Constant.MsgLogStatus.SENDING);
+        msgLog.setTryCount(0);
+        msgLog.setCreateTime(date);
+        msgLog.setUpdateTime(date);
+        msgLog.setNextTryTime(JodaTimeUtil.plusMinutes(date, 1));
+        msgLogMapper.insert(msgLog);
+    }
 }
