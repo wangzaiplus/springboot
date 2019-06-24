@@ -16,7 +16,6 @@ public class LoginLog implements Serializable {
 
     private Integer id;
     private Integer userId;
-    private String msgId;
     private Integer type;
     private String description;
     private Date createTime;
