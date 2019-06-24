@@ -7,10 +7,11 @@ import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.config.RabbitConfig;
 import com.wangzaiplus.test.mapper.MsgLogMapper;
 import com.wangzaiplus.test.mapper.UserMapper;
+import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.pojo.MsgLog;
 import com.wangzaiplus.test.pojo.User;
-import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.service.UserService;
+import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.JodaTimeUtil;
 import com.wangzaiplus.test.util.JsonUtil;
 import com.wangzaiplus.test.util.RandomUtil;
@@ -36,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private MsgLogMapper msgLogMapper;
+
+    @Autowired
+    private JedisUtil jedisUtil;
 
     @Override
     public List<User> getAll() {
@@ -88,11 +92,15 @@ public class UserServiceImpl implements UserService {
      * @param user
      */
     private void saveAndSendMsg(User user) {
-        LoginLog loginLog = new LoginLog();
-
         String msgId = RandomUtil.UUID32();
+
+        String ok = jedisUtil.set(Constant.Redis.MSG_CONSUMER_PREFIX + msgId, msgId);
+        if (!Constant.Redis.OK.equals(ok)) {
+            return;
+        }
+
+        LoginLog loginLog = new LoginLog();
         loginLog.setUserId(user.getId());
-        loginLog.setMsgId("");
         loginLog.setType(Constant.LogType.LOGIN);
         Date date = new Date();
         loginLog.setDescription(user.getUsername() + "在" + JodaTimeUtil.dateToStr(date) + "登录系统");

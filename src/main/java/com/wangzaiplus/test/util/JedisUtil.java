@@ -30,7 +30,7 @@ public class JedisUtil {
             jedis = getJedis();
             return jedis.set(key, value);
         } catch (Exception e) {
-            log.error("set key:{} value:{} error", key, value, e);
+            log.error("set key: {} value: {} error", key, value, e);
             return null;
         } finally {
             close(jedis);
@@ -52,6 +52,26 @@ public class JedisUtil {
             return jedis.setex(key, expireTime, value);
         } catch (Exception e) {
             log.error("set key:{} value:{} expireTime:{} error", key, value, expireTime, e);
+            return null;
+        } finally {
+            close(jedis);
+        }
+    }
+
+    /**
+     * 设值
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public Long setnx(String key, String value) {
+        Jedis jedis = null;
+        try {
+            jedis = getJedis();
+            return jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("set key:{} value:{} error", key, value, e);
             return null;
         } finally {
             close(jedis);

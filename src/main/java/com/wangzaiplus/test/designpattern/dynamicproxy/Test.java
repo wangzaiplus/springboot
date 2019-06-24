@@ -7,7 +7,7 @@ public class Test {
     public static void main(String[] args) {
 //        PayService service = new PayServiceImpl();
 //        PayProxy payProxy = new PayProxy(service);
-//        PayService payService = (PayService) payProxy.getPayProxy();
+//        PayService payService = (PayService) payProxy.getProxy();
 //        payService.pay("马云", BigDecimal.TEN);
 
         PayProxy payProxy2 = new PayProxy(new PayServiceImpl());

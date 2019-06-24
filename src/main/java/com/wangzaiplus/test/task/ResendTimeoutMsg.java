@@ -28,7 +28,7 @@ public class ResendTimeoutMsg {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+//    @Scheduled(cron = "0/10 * * * * ?")
     public void resendTimeoutMsg() {
         log.info("开始执行定时任务...");
 
