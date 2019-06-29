@@ -31,7 +31,7 @@ public class LoginLogConsumer implements BaseConsumer {
             log.error("logUserConsumer error", e);
             channel.basicNack(tag, false, true);
         } finally {
-//            channel.basicAck(tag, false);
+            channel.basicAck(tag, false);
         }
     }
 }
