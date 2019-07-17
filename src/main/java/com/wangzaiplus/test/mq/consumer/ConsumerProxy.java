@@ -1,4 +1,4 @@
-package com.wangzaiplus.test.amqp;
+package com.wangzaiplus.test.mq.consumer;
 
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.util.JedisUtil;

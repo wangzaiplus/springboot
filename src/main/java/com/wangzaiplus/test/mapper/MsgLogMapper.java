@@ -14,4 +14,6 @@ public interface MsgLogMapper {
 
     void updateTryCount(MsgLog msgLog);
 
+    MsgLog selectByPrimaryKey(String msgId);
+
 }

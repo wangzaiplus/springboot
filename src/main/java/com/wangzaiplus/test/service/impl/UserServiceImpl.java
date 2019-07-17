@@ -1,6 +1,6 @@
 package com.wangzaiplus.test.service.impl;
 
-import com.wangzaiplus.test.amqp.MessageHelper;
+import com.wangzaiplus.test.mq.MessageHelper;
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ResponseCode;
 import com.wangzaiplus.test.common.ServerResponse;
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
         MsgLog msgLog = new MsgLog();
         msgLog.setMsgId(msgId);
         msgLog.setMsg(JsonUtil.objToStr(loginLog));
-        msgLog.setStatus(Constant.MsgLogStatus.SENDING);
+        msgLog.setStatus(Constant.MsgLogStatus.DELIVERING);
         msgLog.setTryCount(0);
         msgLog.setCreateTime(date);
         msgLog.setUpdateTime(date);

@@ -1,6 +1,7 @@
-package com.wangzaiplus.test.amqp;
+package com.wangzaiplus.test.mq.consumer;
 
 import com.rabbitmq.client.Channel;
+import com.wangzaiplus.test.mq.MessageHelper;
 import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.service.LoginLogService;
 import lombok.extern.slf4j.Slf4j;

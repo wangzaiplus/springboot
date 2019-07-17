@@ -4,6 +4,8 @@
     <resultMap id="BaseResultMap" type="com.wangzaiplus.test.pojo.MsgLog" >
         <id column="msg_id" property="msgId" jdbcType="VARCHAR" />
         <result column="msg" property="msg" jdbcType="VARCHAR" />
+        <result column="exchange" property="exchange" jdbcType="VARCHAR" />
+        <result column="routing_key" property="routingKey" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="INTEGER" />
         <result column="try_count" property="tryCount" jdbcType="INTEGER" />
         <result column="next_try_time" property="nextTryTime" jdbcType="TIMESTAMP" />
@@ -12,12 +14,12 @@
     </resultMap>
 
     <sql id="Base_Column_List" >
-        msg_id, msg, status, try_count, next_try_time, create_time, update_time
+        msg_id, msg, exchange, routing_key, status, try_count, next_try_time, create_time, update_time
     </sql>
 
     <insert id="insert" parameterType="com.wangzaiplus.test.pojo.MsgLog">
-        INSERT INTO msg_log(msg_id, msg, status, try_count, next_try_time, create_time, update_time)
-        VALUES (#{msgId}, #{msg}, #{status}, #{tryCount}, #{nextTryTime}, #{createTime}, #{updateTime})
+        INSERT INTO msg_log(msg_id, msg, exchange, routing_key, status, try_count, next_try_time, create_time, update_time)
+        VALUES (#{msgId}, #{msg}, #{exchange}, #{routingKey}, #{status}, #{tryCount}, #{nextTryTime}, #{createTime}, #{updateTime})
     </insert>
 
     <update id="updateStatus" parameterType="com.wangzaiplus.test.pojo.MsgLog">
@@ -36,4 +38,11 @@
         update msg_log set try_count = try_count + 1, next_try_time = #{nextTryTime}, update_time = now()
         where msg_id = #{msgId}
     </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from msg_log
+        where msg_id = #{msgId,jdbcType=VARCHAR}
+    </select>
 </mapper>
