@@ -1,4 +1,4 @@
-package com.wangzaiplus.test.amqp;
+package com.wangzaiplus.test.mq;
 
 import com.wangzaiplus.test.util.JsonUtil;
 import org.springframework.amqp.core.Message;
