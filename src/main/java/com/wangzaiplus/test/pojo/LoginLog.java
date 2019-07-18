@@ -20,5 +20,6 @@ public class LoginLog implements Serializable {
     private String description;
     private Date createTime;
     private Date updateTime;
+    private String msgId;// 消息id
 
 }

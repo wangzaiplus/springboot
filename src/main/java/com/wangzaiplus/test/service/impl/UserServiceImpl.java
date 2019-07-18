@@ -1,19 +1,18 @@
 package com.wangzaiplus.test.service.impl;
 
-import com.wangzaiplus.test.mq.MessageHelper;
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ResponseCode;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.config.RabbitConfig;
 import com.wangzaiplus.test.mapper.MsgLogMapper;
 import com.wangzaiplus.test.mapper.UserMapper;
+import com.wangzaiplus.test.mq.MessageHelper;
 import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.pojo.MsgLog;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.UserService;
 import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.JodaTimeUtil;
-import com.wangzaiplus.test.util.JsonUtil;
 import com.wangzaiplus.test.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -94,11 +93,6 @@ public class UserServiceImpl implements UserService {
     private void saveAndSendMsg(User user) {
         String msgId = RandomUtil.UUID32();
 
-        String ok = jedisUtil.set(Constant.Redis.MSG_CONSUMER_PREFIX + msgId, msgId);
-        if (!Constant.Redis.OK.equals(ok)) {
-            return;
-        }
-
         LoginLog loginLog = new LoginLog();
         loginLog.setUserId(user.getId());
         loginLog.setType(Constant.LogType.LOGIN);
@@ -106,19 +100,12 @@ public class UserServiceImpl implements UserService {
         loginLog.setDescription(user.getUsername() + "在" + JodaTimeUtil.dateToStr(date) + "登录系统");
         loginLog.setCreateTime(date);
         loginLog.setUpdateTime(date);
+        loginLog.setMsgId(msgId);
 
-        CorrelationData correlationData = new CorrelationData();
-        correlationData.setId(msgId);
+        CorrelationData correlationData = new CorrelationData(msgId);
         rabbitTemplate.convertAndSend(RabbitConfig.LOGIN_LOG_EXCHANGE_NAME, RabbitConfig.LOGIN_LOG_ROUTING_KEY_NAME, MessageHelper.objToMsg(loginLog), correlationData);
 
-        MsgLog msgLog = new MsgLog();
-        msgLog.setMsgId(msgId);
-        msgLog.setMsg(JsonUtil.objToStr(loginLog));
-        msgLog.setStatus(Constant.MsgLogStatus.DELIVERING);
-        msgLog.setTryCount(0);
-        msgLog.setCreateTime(date);
-        msgLog.setUpdateTime(date);
-        msgLog.setNextTryTime(JodaTimeUtil.plusMinutes(date, 1));
+        MsgLog msgLog = new MsgLog(msgId, loginLog, RabbitConfig.LOGIN_LOG_EXCHANGE_NAME, RabbitConfig.LOGIN_LOG_ROUTING_KEY_NAME);
         msgLogMapper.insert(msgLog);
     }
 }

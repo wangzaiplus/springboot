@@ -1,4 +1,4 @@
-package com.wangzaiplus.test.mq.consumer;
+package com.wangzaiplus.test.mq;
 
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
