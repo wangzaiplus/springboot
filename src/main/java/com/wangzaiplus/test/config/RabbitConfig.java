@@ -1,8 +1,7 @@
 package com.wangzaiplus.test.config;
 
 import com.wangzaiplus.test.common.Constant;
-import com.wangzaiplus.test.mapper.MsgLogMapper;
-import com.wangzaiplus.test.pojo.MsgLog;
+import com.wangzaiplus.test.service.MsgLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -23,7 +22,7 @@ public class RabbitConfig {
     private CachingConnectionFactory connectionFactory;
 
     @Autowired
-    private MsgLogMapper msgLogMapper;
+    private MsgLogService msgLogService;
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
@@ -34,12 +33,8 @@ public class RabbitConfig {
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             if (ack) {
                 log.info("消息成功发送到Exchange");
-
                 String msgId = correlationData.getId();
-                MsgLog msgLog = new MsgLog();
-                msgLog.setMsgId(msgId);
-                msgLog.setStatus(Constant.MsgLogStatus.DELIVER_SUCCESS);
-                msgLogMapper.updateStatus(msgLog);
+                msgLogService.updateStatus(msgId, Constant.MsgLogStatus.DELIVER_SUCCESS);
             } else {
                 log.info("消息发送到Exchange失败: cause: {}", correlationData, cause);
             }
