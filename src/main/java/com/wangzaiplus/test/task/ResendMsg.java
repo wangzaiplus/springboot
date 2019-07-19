@@ -1,11 +1,9 @@
 package com.wangzaiplus.test.task;
 
 import com.wangzaiplus.test.common.Constant;
-import com.wangzaiplus.test.config.RabbitConfig;
 import com.wangzaiplus.test.mq.MessageHelper;
 import com.wangzaiplus.test.pojo.MsgLog;
 import com.wangzaiplus.test.service.MsgLogService;
-import com.wangzaiplus.test.util.JodaTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
