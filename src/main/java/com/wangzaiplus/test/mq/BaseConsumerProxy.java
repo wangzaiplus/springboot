@@ -87,7 +87,7 @@ public class BaseConsumerProxy {
     private boolean isConsumed(String correlationId) {
         MsgLog msgLog = msgLogService.selectByMsgId(correlationId);
         if (null == msgLog || msgLog.getStatus().equals(Constant.MsgLogStatus.CONSUMED_SUCCESS)) {
-            return false;
+            return true;
         }
 
         return false;
