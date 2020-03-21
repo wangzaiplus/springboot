@@ -42,7 +42,7 @@ public class TestServiceImpl implements TestService {
         msgLogMapper.insert(msgLog);// 消息入库
 
         CorrelationData correlationData = new CorrelationData(msgId);
-        rabbitTemplate.convertAndSend("sadfasdf", RabbitConfig.MAIL_ROUTING_KEY_NAME, MessageHelper.objToMsg(mail), correlationData);// 发送消息
+        rabbitTemplate.convertAndSend(RabbitConfig.MAIL_EXCHANGE_NAME, RabbitConfig.MAIL_ROUTING_KEY_NAME, MessageHelper.objToMsg(mail), correlationData);// 发送消息
 
         return ServerResponse.success(ResponseCode.MAIL_SEND_SUCCESS.getMsg());
     }
