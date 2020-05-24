@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/redisson")
 public class RedissonController {
 
-    @Autowired
+    @Autowired(required = false)
     private RedissonClient redissonClient;
 
     @RequestMapping("testRedisson")

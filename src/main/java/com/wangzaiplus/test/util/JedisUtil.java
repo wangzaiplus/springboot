@@ -10,7 +10,7 @@ import redis.clients.jedis.JedisPool;
 @Slf4j
 public class JedisUtil {
 
-    @Autowired
+    @Autowired(required = false)
     private JedisPool jedisPool;
 
     private Jedis getJedis() {
