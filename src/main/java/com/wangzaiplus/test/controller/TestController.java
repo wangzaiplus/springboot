@@ -1,10 +1,16 @@
 package com.wangzaiplus.test.controller;
 
+import com.google.common.collect.Lists;
 import com.wangzaiplus.test.annotation.AccessLimit;
 import com.wangzaiplus.test.annotation.ApiIdempotent;
 import com.wangzaiplus.test.common.ServerResponse;
+import com.wangzaiplus.test.mapper.MsgLogMapper;
+import com.wangzaiplus.test.mapper.UserMapper;
 import com.wangzaiplus.test.pojo.Mail;
+import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.TestService;
+import com.wangzaiplus.test.service.batch.mapperproxy.MapperProxy;
+import com.wangzaiplus.test.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
@@ -13,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/test")
 @Slf4j
@@ -20,6 +28,12 @@ public class TestController {
 
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private MsgLogMapper msgLogMapper;
 
     @ApiIdempotent
     @PostMapping("testIdempotence")
@@ -42,4 +56,51 @@ public class TestController {
 
         return testService.send(mail);
     }
+
+    @PostMapping("single")
+    public ServerResponse single(int size) {
+        List<User> list = Lists.newArrayList();
+
+        for (int i = 0; i < size; i++) {
+            String str = RandomUtil.UUID32();
+            User user = User.builder().username(str).password(str).build();
+            list.add(user);
+        }
+
+        long startTime = System.nanoTime();
+        log.info("batch insert costs: {} ms", (System.nanoTime() - startTime) / 1000000);
+
+        return ServerResponse.success();
+    }
+
+    @PostMapping("batchInsert")
+    public ServerResponse batchInsert(int size) {
+        List<User> list = Lists.newArrayList();
+
+        for (int i = 0; i < size; i++) {
+            String str = RandomUtil.UUID32();
+            User user = User.builder().username(str).password(str).build();
+            list.add(user);
+        }
+
+        new MapperProxy<User>(userMapper).batchInsert(list);
+
+        return ServerResponse.success();
+    }
+
+    @PostMapping("batchUpdate")
+    public ServerResponse batchUpdate(String ids) {
+        List<User> list = Lists.newArrayList();
+
+        String[] split = ids.split(",");
+        for (String id : split) {
+            User user = User.builder().id(Integer.valueOf(id)).username("batchUpdate_" + RandomUtil.UUID32()).password("123456").build();
+            list.add(user);
+        }
+
+        new MapperProxy<User>(userMapper).batchUpdate(list);
+
+        return ServerResponse.success();
+    }
+
 }

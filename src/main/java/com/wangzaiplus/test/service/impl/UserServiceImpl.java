@@ -11,6 +11,7 @@ import com.wangzaiplus.test.pojo.LoginLog;
 import com.wangzaiplus.test.pojo.MsgLog;
 import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.UserService;
+import com.wangzaiplus.test.service.batch.mapperproxy.MapperProxy;
 import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.JodaTimeUtil;
 import com.wangzaiplus.test.util.RandomUtil;
@@ -108,4 +109,15 @@ public class UserServiceImpl implements UserService {
         MsgLog msgLog = new MsgLog(msgId, loginLog, RabbitConfig.LOGIN_LOG_EXCHANGE_NAME, RabbitConfig.LOGIN_LOG_ROUTING_KEY_NAME);
         msgLogMapper.insert(msgLog);
     }
+
+    @Override
+    public void batchInsert(List<User> list) {
+        new MapperProxy<User>(userMapper).batchInsert(list);
+    }
+
+    @Override
+    public void batchUpdate(List<User> list) {
+        new MapperProxy<User>(userMapper).batchUpdate(list);
+    }
+
 }

@@ -1,11 +1,12 @@
 package com.wangzaiplus.test.mapper;
 
 import com.wangzaiplus.test.pojo.User;
+import com.wangzaiplus.test.service.batch.BatchProcessMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface UserMapper {
+public interface UserMapper extends BatchProcessMapper<User> {
 
     List<User> selectAll();
 

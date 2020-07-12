@@ -1,10 +1,11 @@
 package com.wangzaiplus.test.mapper;
 
 import com.wangzaiplus.test.pojo.MsgLog;
+import com.wangzaiplus.test.service.batch.BatchProcessMapper;
 
 import java.util.List;
 
-public interface MsgLogMapper {
+public interface MsgLogMapper extends BatchProcessMapper<MsgLog> {
 
     void insert(MsgLog msgLog);
 

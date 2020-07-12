@@ -49,4 +49,33 @@
         FROM user
         where username = #{username} and password = #{password}
     </select>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into user(username, password)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.username}, #{item.password})
+        </foreach>
+    </insert>
+
+    <insert id="batchUpdate" parameterType="list">
+        update user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="username=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id = #{item.id} then #{item.username}
+                </foreach>
+            </trim>
+            <trim prefix="password=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id = #{item.id} then #{item.password}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </insert>
+
 </mapper>

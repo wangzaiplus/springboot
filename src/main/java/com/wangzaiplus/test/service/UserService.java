@@ -21,4 +21,8 @@ public interface UserService {
 
     ServerResponse login(String username, String password);
 
+    void batchInsert(List<User> list);
+
+    void batchUpdate(List<User> list);
+
 }

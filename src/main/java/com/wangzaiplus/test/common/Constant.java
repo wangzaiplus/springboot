@@ -2,6 +2,8 @@ package com.wangzaiplus.test.common;
 
 public class Constant {
 
+    public static final int MAX_SIZE_PER_TIME = 1000;
+
     public interface Redis {
         String OK = "OK";
         Integer EXPIRE_TIME_MINUTE = 60;// 过期时间, 60s, 一分钟
