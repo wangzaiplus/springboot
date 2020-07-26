@@ -51,10 +51,13 @@
     </select>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user(username, password)
+        insert into user(username, password, password2, password3, password4, password5, password6,
+        password7, password8, password9, password10)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.username}, #{item.password})
+            (#{item.username}, #{item.password}, #{item.password2}, #{item.password3},
+            #{item.password4}, #{item.password5}, #{item.password6}, #{item.password7},
+            #{item.password8}, #{item.password9}, #{item.password10})
         </foreach>
     </insert>
 
@@ -77,5 +80,12 @@
             #{item.id}
         </foreach>
     </insert>
+
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM user
+        where username = #{username}
+    </select>
 
 </mapper>

@@ -13,6 +13,7 @@ import com.wangzaiplus.test.service.batch.mapperproxy.MapperProxy;
 import com.wangzaiplus.test.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,6 +102,31 @@ public class TestController {
         new MapperProxy<User>(userMapper).batchUpdate(list);
 
         return ServerResponse.success();
+    }
+
+    @PostMapping("sync")
+    public ServerResponse sync() {
+        List<User> list = Lists.newArrayList();
+        for (int i = 0; i < 300; i++) {
+            String uuid32 = RandomUtil.UUID32();
+            User user = User.builder().username(uuid32).password(uuid32).password2(uuid32).password3(uuid32)
+                    .password4(uuid32).password5(uuid32).password6(uuid32).password7(uuid32)
+                    .password8(uuid32).password9(uuid32).password10(uuid32).build();
+            list.add(user);
+        }
+
+        userMapper.batchInsert(list);
+
+        check(list);
+
+        return ServerResponse.success();
+    }
+
+    @Async
+    public void check(List<User> list) {
+        String username = list.get(list.size() - 1).getUsername();
+        User user = userMapper.selectByUsername(username);
+        log.info(user.getUsername());
     }
 
 }
