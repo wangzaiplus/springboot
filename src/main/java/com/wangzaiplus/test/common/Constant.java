@@ -26,4 +26,28 @@ public class Constant {
         Integer CONSUMED_SUCCESS = 3;// 已消费
     }
 
+    public enum CalculateTypeEnum {
+        ADD(1, "加"),
+        SUBTRACT(2, "减"),
+        MULTIPLY(3, "乘"),
+        DIVIDE(4, "除")
+        ;
+
+        Integer type;
+        String desc;
+
+        CalculateTypeEnum(Integer type, String desc) {
+            this.type = type;
+            this.desc = desc;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
 }
