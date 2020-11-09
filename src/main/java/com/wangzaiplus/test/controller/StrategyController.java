@@ -37,9 +37,6 @@ public class StrategyController {
     @Autowired
     private CalculateServiceFactory calculateServiceFactory;
 
-    @Autowired
-    private CalculateStrategy calculateStrategy;
-
     @PostMapping("strategy1")
     public ServerResponse strategy1(@RequestBody CalculateDto dto) {
         Integer type = dto.getType();
@@ -96,7 +93,7 @@ public class StrategyController {
 
     @PostMapping("strategy4")
     public ServerResponse strategy4(@RequestBody CalculateDto dto) {
-        CalculateService calculateService = calculateStrategy.getCalculateService(dto.getType());
+        CalculateService calculateService = CalculateStrategy.getCalculateService(dto.getType());
         int result = calculateService.calculate(dto.getA(), dto.getB());
         return ServerResponse.success(result);
     }
