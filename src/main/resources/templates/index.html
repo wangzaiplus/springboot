@@ -36,10 +36,29 @@
         </el-submenu>
         <el-menu-item index="3" style="float: right">
             <template>
-                <el-button type="text" @click="login">登录</el-button>
+                <el-button type="text" @click="dialogFormVisible = true">登录</el-button>
             </template>
         </el-menu-item>
     </el-menu>
+
+    <el-dialog title="登录" :visible.sync="dialogFormVisible" width="30%">
+        <el-form label-width="100px" :model="form">
+            <el-form-item label="用户名">
+                <el-col :span="16">
+                    <el-input v-model="form.name" autocomplete="off"></el-input>
+                </el-col>
+            </el-form-item>
+            <el-form-item label="密码">
+                <el-col :span="16">
+                    <el-input type="password" v-model="form.password" autocomplete="off"></el-input>
+                </el-col>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary">登录</el-button>
+            </el-form-item>
+        </el-form>
+    </el-dialog>
+
 
     <el-row :gutter="20">
         <el-col :span="12" :offset="6"><div class="grid-content bg-purple">
@@ -80,7 +99,12 @@
     var vue = new Vue({
         el: '#root',
         data: {
-            users: []
+            dialogFormVisible: false,
+            form: {
+                name: '',
+                password: ''
+            },
+            formLabelWidth: '120px'
         },
         methods: {
             login: function() {
