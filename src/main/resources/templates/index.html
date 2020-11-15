@@ -12,28 +12,13 @@
         .el-row {
             margin: 20px;
         }
-        .box-card {
-            margin-bottom: 10px;
-        }
     </style>
 
 </head>
 <body>
 <div id="root">
     <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-        <el-menu-item index="1">java-utils.com</el-menu-item>
-        <el-submenu index="2">
-            <template slot="title">我的工作台</template>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-            <el-menu-item index="2-3">选项3</el-menu-item>
-            <el-submenu index="2-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="2-4-1">选项1</el-menu-item>
-                <el-menu-item index="2-4-2">选项2</el-menu-item>
-                <el-menu-item index="2-4-3">选项3</el-menu-item>
-            </el-submenu>
-        </el-submenu>
+        <el-menu-item index="1">基金定投</el-menu-item>
         <el-menu-item index="3" style="float: right">
             <template>
                 <el-button type="text" @click="dialogFormVisible = true">登录</el-button>
@@ -72,26 +57,24 @@
     <el-row :gutter="20">
         <el-col :span="12" :offset="6"><div class="grid-content bg-purple">
             <template>
-                <el-tabs>
-                    <el-tab-pane label="工具类" name="first"></el-tab-pane>
-                    <el-tab-pane label="文章" name="second">配置管理</el-tab-pane>
-                    <el-tab-pane label="下载" name="third">角色管理</el-tab-pane>
-                    <el-tab-pane label="定时任务补偿" name="fourth">
-                        <el-card class="box-card" shadow="hover" v-for="user in users">
-                            <el-link type="primary" href="http://www.baidu.com">大数据、云计算、人工智能等新兴方向再一次推大数据、云计算、人工智能等新兴方向再一次推大数据、云计算、人工智能等新兴方向再一次推</el-link>
-                            <p><small>{{user.username}} 大数据、云计算、人工智能等新兴方向再一次推动了java工程师的职业发展。java开发工程师涉及到多个领域，主要负责电商、医疗、金融、ERP、物流管理、App服务端等系统功能的开发和优化工作。</small></p>
-                            <small>
-                                <i class="el-icon-user-solid">88</i>
-                                <i class="el-icon-star-on">741</i>
-                                <i class="el-icon-time">2020-04-26 22:22</i>
-                            </small>
-                        </el-card>
+                <el-tabs v-model="activeName">
+                    <el-tab-pane label="股票型" name="mixed">
+                        <template>
+                            <el-table :data="tableData" style="width: 100%">
+                                <el-table-column prop="code" label="基金代码" width="180"></el-table-column>
+                                <el-table-column prop="name" label="名称" width="180"></el-table-column>
+                                <el-table-column prop="earningOf1" label="近1年定投收益"></el-table-column>
+                                <el-table-column prop="earningOf2" label="近2年定投收益"></el-table-column>
+                                <el-table-column prop="earningOf3" label="近3年定投收益"></el-table-column>
+                                <el-table-column prop="earningOf5" label="近5年定投收益"></el-table-column>
+                            </el-table>
+                        </template>
                     </el-tab-pane>
+                    <el-tab-pane label="混合型" name="stock">股票型</el-tab-pane>
                 </el-tabs>
             </template>
         </div></el-col>
     </el-row>
-
 </div>
 </body>
 
@@ -104,7 +87,9 @@
                 name: '',
                 password: ''
             },
-            formLabelWidth: '120px'
+            formLabelWidth: '120px',
+            tableData: [],
+            activeName: 'mixed'
         },
         methods: {
             login: function() {
@@ -125,18 +110,24 @@
             }
         },
         mounted() {
-            axios
-                .get('http://localhost:8080/search/users', {
-                    params: {
-                        word: ""
+            axios({
+                method: 'post',
+                url: 'http://localhost:8080/fund/fund',
+                data: {
+                    title: this.title,
+                    content: this.content
+                },
+                headers: {'Content-Type': 'application/json'},
+                transformRequest: function(obj) {
+                    var str = [];
+                    for(var p in obj){
+                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
                     }
-                })
-                .then(function (response) {
-                    vue.users = response.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
+                    return str.join("&");
+                }
+            }).then((res)=>{
+                this.tableData = res.data.data;
+            });
         }
     });
 </script>
