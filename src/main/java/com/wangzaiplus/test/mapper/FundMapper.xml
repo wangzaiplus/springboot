@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wangzaiplus.test.mapper.FundMapper" >
+    <resultMap id="BaseResultMap" type="com.wangzaiplus.test.pojo.Fund" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="net_value" property="netValue"/>
+        <result column="yield_of_one_year" property="yieldOfOneYear"/>
+        <result column="yield_of_two_year" property="yieldOfTwoYear"/>
+        <result column="yield_of_three_year" property="yieldOfThreeYear"/>
+        <result column="yield_of_five_year" property="yieldOfFiveYear"/>
+        <result column="type" property="type"/>
+        <result column="established_time" property="establishedTime"/>
+        <result column="asset" property="asset"/>
+        <result column="manager" property="manager"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id
+        ,code
+        ,name
+        ,net_value
+        ,yield_of_one_year
+        ,yield_of_two_year
+        ,yield_of_three_year
+        ,yield_of_five_year
+        ,type
+        ,established_time
+        ,asset
+        ,manager
+        ,status
+        ,is_deleted
+        ,created_time
+        ,updated_time
+    </sql>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM fund
+    </select>
+
+    <select id="selectOne" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM fund
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.wangzaiplus.test.pojo.User">
+        INSERT INTO fund(
+            code
+            ,name
+            ,net_value
+            ,yield_of_one_year
+            ,yield_of_two_year
+            ,yield_of_three_year
+            ,yield_of_five_year
+            ,type
+            ,established_time
+            ,asset
+            ,manager
+            ,status
+            ,is_deleted
+        )
+        VALUES (
+            #{code}
+            ,#{name}
+            ,#{netValue}
+            ,#{yieldOfOneYear}
+            ,#{yieldOfTwoYear}
+            ,#{yieldOfThreeYear}
+            ,#{yieldOfFiveYear}
+            ,#{type}
+            ,#{establishedTime}
+            ,#{asset}
+            ,#{manager}
+            ,#{status}
+            ,#{isDeleted}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.wangzaiplus.test.pojo.User">
+        UPDATE fund SET
+        <if test="code != null">
+            code = #{code},
+        </if>
+        <if test="name != null">
+            name = #{name}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM fund WHERE id =#{id}
+    </delete>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into user(username, password, password2, password3, password4, password5, password6,
+        password7, password8, password9, password10)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.username}, #{item.password}, #{item.password2}, #{item.password3},
+            #{item.password4}, #{item.password5}, #{item.password6}, #{item.password7},
+            #{item.password8}, #{item.password9}, #{item.password10})
+        </foreach>
+    </insert>
+
+    <insert id="batchUpdate" parameterType="list">
+        update user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="username=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id = #{item.id} then #{item.username}
+                </foreach>
+            </trim>
+            <trim prefix="password=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id = #{item.id} then #{item.password}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </insert>
+
+</mapper>

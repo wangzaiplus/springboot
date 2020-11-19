@@ -191,7 +191,7 @@ public class TableParseUtils {
         for (List<String> list : lists) {
             List<String> childrenList = Lists.newArrayList();
             for (String s : split) {
-                Integer colNum = Integer.valueOf(s);
+                Integer colNum = Integer.valueOf(s.trim());
                 Integer colIndex = colNum - Constant.NUMBER_ONE;
                 childrenList.add(list.get(colIndex));
             }
@@ -216,7 +216,7 @@ public class TableParseUtils {
         for (String col : split) {
             Integer colNum;
             try {
-                colNum = Integer.valueOf(col);
+                colNum = Integer.valueOf(col.trim());
             } catch (Exception e) {
                 log.error("Integer.valueOf error, " + e.getMessage(), e);
                 return false;
