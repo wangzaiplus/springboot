@@ -1,5 +1,7 @@
 package com.wangzaiplus.test.common;
 
+import java.util.Arrays;
+
 public class Constant {
 
     public static final int MAX_SIZE_PER_TIME = 1000;
@@ -60,6 +62,37 @@ public class Constant {
         public String getDesc() {
             return desc;
         }
+    }
+
+    public enum FundType {
+        STOCK_FUND(1, "股票型"),
+        HYBRID_FUND(2, "混合型"),
+        BOND_FUND(3, "债券型"),
+        INDEX_FUND(4, "指数型"),
+        QDII(5, "QDII")
+        ;
+
+        private int code;
+        private String msg;
+
+        FundType(int code, String msg) {
+            this.code = code;
+            this.msg = msg;;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
+
+        public static boolean contains(int code) {
+            FundType[] values = FundType.values();
+            return Arrays.stream(values).filter(fundType -> fundType.getCode() == code).findAny().isPresent();
+        }
+
     }
 
 }

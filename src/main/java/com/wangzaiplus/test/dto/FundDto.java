@@ -1,5 +1,6 @@
 package com.wangzaiplus.test.dto;
 
+import com.wangzaiplus.test.annotation.ColNum;
 import lombok.*;
 
 import java.util.Objects;
@@ -12,11 +13,19 @@ import java.util.Objects;
 @Builder
 public class FundDto {
 
+    @ColNum(colNum = 1)
     private String code;
+    @ColNum(colNum = 2)
     private String name;
+    @ColNum(colNum = 3)
+    private String netValue;
+    @ColNum(colNum = 4)
     private String earningOf1;
+    @ColNum(colNum = 5)
     private String earningOf2;
+    @ColNum(colNum = 6)
     private String earningOf3;
+    @ColNum(colNum = 7)
     private String earningOf5;
 
     @Override
