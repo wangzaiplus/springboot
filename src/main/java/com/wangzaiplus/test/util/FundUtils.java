@@ -2,6 +2,7 @@ package com.wangzaiplus.test.util;
 
 import com.google.common.collect.Lists;
 import com.wangzaiplus.test.common.Constant;
+import com.wangzaiplus.test.dto.FundDto;
 import com.wangzaiplus.test.dto.FundJsonResponseDto;
 import com.wangzaiplus.test.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.jdom2.input.SAXBuilder;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class FundUtils {
@@ -28,7 +30,28 @@ public class FundUtils {
 
     public static final String FUND_URL = "http://fund.eastmoney.com/api/Dtshph.ashx";
 
-    public static List<List<String>> getFundData(int type) {
+    public static List<FundDto> getFundDtoList(Integer type) {
+        if (!Constant.FundType.contains(type)) {
+            throw new ServiceException("type error: " + type);
+        }
+
+        List<List<String>> lists = getFundData(type);
+        if (CollectionUtils.isEmpty(lists)) {
+            return null;
+        }
+
+        return lists.stream().map(list -> {
+            FundDto dto = FundDto.builder().build();
+            try {
+                BeanUtils.convert(list, dto);
+            } catch (Exception e) {
+                log.error("BeanUtils.convert error: " + e.getMessage(), e);
+            }
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    public static List<List<String>> getFundData(Integer type) {
         if (!Constant.FundType.contains(type)) {
             throw new ServiceException("type error: " + type);
         }

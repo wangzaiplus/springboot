@@ -61,12 +61,13 @@
                     <el-tab-pane label="股票型" name="mixed">
                         <template>
                             <el-table :data="tableData" style="width: 100%">
-                                <el-table-column prop="code" label="基金代码" width="180"></el-table-column>
-                                <el-table-column prop="name" label="名称" width="180"></el-table-column>
-                                <el-table-column prop="earningOf1" label="近1年定投收益"></el-table-column>
-                                <el-table-column prop="earningOf2" label="近2年定投收益"></el-table-column>
-                                <el-table-column prop="earningOf3" label="近3年定投收益"></el-table-column>
-                                <el-table-column prop="earningOf5" label="近5年定投收益"></el-table-column>
+                                <el-table-column prop="code" label="基金代码"></el-table-column>
+                                <el-table-column prop="name" label="名称"></el-table-column>
+                                <el-table-column prop="netValue" label="单位净值"></el-table-column>
+                                <el-table-column prop="yieldOfOneYear" label="近1年定投收益"></el-table-column>
+                                <el-table-column prop="yieldOfTwoYear" label="近2年定投收益"></el-table-column>
+                                <el-table-column prop="yieldOfThreeYear" label="近3年定投收益"></el-table-column>
+                                <el-table-column prop="yieldOfFiveYear" label="近5年定投收益"></el-table-column>
                             </el-table>
                         </template>
                     </el-tab-pane>
@@ -91,42 +92,14 @@
             tableData: [],
             activeName: 'mixed'
         },
-        methods: {
-            login: function() {
-                this.$prompt('用户名', '登录', {
-                    confirmButtonText: '登录',
-                    cancelButtonText: '取消',
-                }).then(({ value }) => {
-                    this.$message({
-                    type: 'success',
-                    message: '你的邮箱是: ' + value
-                });
-            }).catch(() => {
-                    this.$message({
-                    type: 'info',
-                    message: '取消输入'
-                });
-            });
-            }
-        },
         mounted() {
-            axios({
-                method: 'post',
-                url: 'http://localhost:8080/fund/fund',
-                data: {
-                    title: this.title,
-                    content: this.content
-                },
-                headers: {'Content-Type': 'application/json'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj){
-                        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }
-                    return str.join("&");
-                }
-            }).then((res)=>{
-                this.tableData = res.data.data;
+            axios.post('http://localhost:8080/fund/search', {
+                type: 5
+            }).then(function (response) {
+                vue.tableData = response.data.data;
+                console.log("search success");
+            }).catch(function (error) {
+                console.log(error);
             });
         }
     });

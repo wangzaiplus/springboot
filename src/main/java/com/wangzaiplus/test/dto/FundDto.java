@@ -3,6 +3,8 @@ package com.wangzaiplus.test.dto;
 import com.wangzaiplus.test.annotation.ColNum;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Objects;
 
 @Getter
@@ -18,15 +20,23 @@ public class FundDto {
     @ColNum(colNum = 2)
     private String name;
     @ColNum(colNum = 3)
-    private String netValue;
+    private BigDecimal netValue;
     @ColNum(colNum = 4)
-    private String earningOf1;
+    private String yieldOfOneYear;
     @ColNum(colNum = 5)
-    private String earningOf2;
+    private String yieldOfTwoYear;
     @ColNum(colNum = 6)
-    private String earningOf3;
+    private String yieldOfThreeYear;
     @ColNum(colNum = 7)
-    private String earningOf5;
+    private String yieldOfFiveYear;
+    private int type;
+    private Date establishedTime;
+    private String asset;
+    private String manager;
+    private Integer status;
+    private Integer isDeleted;
+    private Date createdTime;
+    private Date updatedTime;
 
     @Override
     public boolean equals(Object obj) {

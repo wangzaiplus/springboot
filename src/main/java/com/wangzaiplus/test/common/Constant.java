@@ -72,15 +72,15 @@ public class Constant {
         QDII(5, "QDII")
         ;
 
-        private int code;
+        private Integer code;
         private String msg;
 
-        FundType(int code, String msg) {
+        FundType(Integer code, String msg) {
             this.code = code;
-            this.msg = msg;;
+            this.msg = msg;
         }
 
-        public int getCode() {
+        public Integer getCode() {
             return code;
         }
 
@@ -88,7 +88,7 @@ public class Constant {
             return msg;
         }
 
-        public static boolean contains(int code) {
+        public static boolean contains(Integer code) {
             FundType[] values = FundType.values();
             return Arrays.stream(values).filter(fundType -> fundType.getCode() == code).findAny().isPresent();
         }
