@@ -1,21 +1,26 @@
 package com.wangzaiplus.test.mapper;
 
 import com.wangzaiplus.test.pojo.Fund;
-import com.wangzaiplus.test.pojo.User;
 import com.wangzaiplus.test.service.batch.BatchProcessMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface FundMapper extends BatchProcessMapper<Fund> {
 
-    List<User> selectAll();
+    List<Fund> selectAll();
 
-    User selectOne(Integer id);
+    Fund selectOne(Integer id);
 
-    void insert(User user);
+    void insert(Fund fund);
 
-    void update(User user);
+    void update(Fund fund);
 
     void delete(Integer id);
+
+    Fund selectByCodeAndType(Fund fund);
+
+    List<Fund> selectByType(Fund fund);
 
 }

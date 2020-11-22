@@ -2,8 +2,10 @@ package com.wangzaiplus.test.controller;
 
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.dto.FundDto;
-import com.wangzaiplus.test.util.FundUtils;
+import com.wangzaiplus.test.pojo.Fund;
+import com.wangzaiplus.test.service.FundService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +18,12 @@ import java.util.List;
 @Slf4j
 public class FundController {
 
+    @Autowired
+    private FundService fundService;
+
     @PostMapping("search")
-    public ServerResponse search(@RequestBody FundDto dto) {
-        List<FundDto> list = FundUtils.getFundDtoList(dto.getType());
+    public ServerResponse search(@RequestBody FundDto fundDto) {
+        List<Fund> list = fundService.selectByType(fundDto);
         return ServerResponse.success(list);
     }
 

@@ -52,7 +52,7 @@
         WHERE id = #{id}
     </select>
 
-    <insert id="insert" parameterType="com.wangzaiplus.test.pojo.User">
+    <insert id="insert" parameterType="com.wangzaiplus.test.pojo.Fund">
         INSERT INTO fund(
             code
             ,name
@@ -65,8 +65,6 @@
             ,established_time
             ,asset
             ,manager
-            ,status
-            ,is_deleted
         )
         VALUES (
             #{code}
@@ -80,19 +78,51 @@
             ,#{establishedTime}
             ,#{asset}
             ,#{manager}
-            ,#{status}
-            ,#{isDeleted}
         )
     </insert>
 
-    <update id="update" parameterType="com.wangzaiplus.test.pojo.User">
+    <update id="update" parameterType="com.wangzaiplus.test.pojo.Fund">
         UPDATE fund SET
-        <if test="code != null">
+        <if test="code != null and code != ''">
             code = #{code},
         </if>
-        <if test="name != null">
-            name = #{name}
+        <if test="name != null and name != ''">
+            name = #{name},
         </if>
+        <if test="netValue != null and netValue != ''">
+            net_value = #{netValue},
+        </if>
+        <if test="yieldOfOneYear != null and yieldOfOneYear != ''">
+            yield_of_one_year = #{yieldOfOneYear},
+        </if>
+        <if test="yieldOfTwoYear != null and yieldOfTwoYear != ''">
+            yield_of_two_year = #{yieldOfTwoYear},
+        </if>
+        <if test="yieldOfThreeYear != null and yieldOfThreeYear != ''">
+            yield_of_three_year = #{yieldOfThreeYear},
+        </if>
+        <if test="yieldOfFiveYear != null and yieldOfFiveYear != ''">
+            yield_of_five_year = #{yieldOfFiveYear},
+        </if>
+        <if test="type != null and type != ''">
+            type = #{type},
+        </if>
+        <if test="establishedTime != null and establishedTime != ''">
+            established_time = #{establishedTime},
+        </if>
+        <if test="asset != null and asset != ''">
+            asset = #{asset},
+        </if>
+        <if test="manager != null and manager != ''">
+            manager = #{manager},
+        </if>
+        <if test="status != null and status != ''">
+            status = #{status},
+        </if>
+        <if test="isDeleted != null and isDeleted != ''">
+            is_deleted = #{isDeleted},
+        </if>
+        updated_time = now()
         WHERE id = #{id}
     </update>
 
@@ -130,5 +160,19 @@
             #{item.id}
         </foreach>
     </insert>
+
+    <select id="selectByCodeAndType" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from fund
+        where code = #{code}
+        and type = #{type}
+    </select>
+
+    <select id="selectByType" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from fund
+        where type = #{type}
+        order by net_value desc
+    </select>
 
 </mapper>

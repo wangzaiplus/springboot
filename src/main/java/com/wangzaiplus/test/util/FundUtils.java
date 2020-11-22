@@ -41,7 +41,7 @@ public class FundUtils {
         }
 
         return lists.stream().map(list -> {
-            FundDto dto = FundDto.builder().build();
+            FundDto dto = FundDto.builder().type(type).build();
             try {
                 BeanUtils.convert(list, dto);
             } catch (Exception e) {
