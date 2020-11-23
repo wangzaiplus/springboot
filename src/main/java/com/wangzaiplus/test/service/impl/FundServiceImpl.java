@@ -1,9 +1,12 @@
 package com.wangzaiplus.test.service.impl;
 
+import com.google.common.collect.Lists;
+import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.dto.FundDto;
 import com.wangzaiplus.test.mapper.FundMapper;
 import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
+import com.wangzaiplus.test.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -11,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
@@ -21,18 +23,24 @@ public class FundServiceImpl implements FundService {
     private FundMapper fundMapper;
 
     @Override
-    public Set<FundDto> combine(int[] earnings, Integer year) {
-        log.info("combine");
-        return null;
-    }
+    public List<FundDto> combine(List<String> list, FundDto fundDto) {
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
 
-    private Set<FundDto> getCombinedFund() {
-        return null;
-    }
+        List<List<FundDto>> lists = Lists.newArrayList();
+        for (String orderByType : list) {
+            FundDto dto = FundDto.builder()
+                    .type(fundDto.getType())
+                    .orderBy(orderByType)
+                    .sort(Constant.FundSortType.DESC.getType())
+                    .limit(fundDto.getLimit())
+                    .build();
+            lists.add(fundMapper.selectByType(dto));
+        }
 
-    private static Set<FundDto> intersection(Set<FundDto> set1, Set<FundDto> set2) {
-        set1.retainAll(set2);
-        return set1;
+        ListUtils listUtils = new ListUtils<FundDto>();
+        return listUtils.intersection(lists, true);
     }
 
     @Override
@@ -54,15 +62,15 @@ public class FundServiceImpl implements FundService {
         }
     }
 
+    @Override
+    public List<FundDto> search(FundDto fundDto) {
+        return fundMapper.selectByType(fundDto);
+    }
+
     private Fund toFund(FundDto fundDto) {
         Fund fund = Fund.builder().build();
         BeanUtils.copyProperties(fundDto, fund);
         return fund;
-    }
-
-    @Override
-    public List<Fund> selectByType(FundDto fundDto) {
-        return fundMapper.selectByType(toFund(fundDto));
     }
 
 }

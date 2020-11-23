@@ -38,6 +38,10 @@ public class FundDto {
     private Date createdTime;
     private Date updatedTime;
 
+    private String orderBy;
+    private String sort;
+    private Integer limit;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -49,7 +53,7 @@ public class FundDto {
         }
 
         FundDto dto = (FundDto) obj;
-        return this.code.equals(dto.getCode());
+        return Objects.equals(this.getCode(), dto.getCode());
     }
 
     @Override

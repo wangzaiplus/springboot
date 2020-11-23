@@ -1,9 +1,11 @@
 package com.wangzaiplus.test.controller;
 
+import com.google.common.collect.Lists;
+import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.dto.FundDto;
-import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
+import com.wangzaiplus.test.util.FundUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +23,24 @@ public class FundController {
     @Autowired
     private FundService fundService;
 
+    @PostMapping("getFundDtoList")
+    public ServerResponse getFundDtoList(@RequestBody FundDto fundDto) {
+        List<FundDto> fundDtoList = FundUtils.getFundDtoList(fundDto.getType());
+        fundService.update(fundDtoList);
+        return ServerResponse.success();
+    }
+
     @PostMapping("search")
     public ServerResponse search(@RequestBody FundDto fundDto) {
-        List<Fund> list = fundService.selectByType(fundDto);
+        List<FundDto> list = fundService.search(fundDto);
         return ServerResponse.success(list);
+    }
+
+    @PostMapping("combine")
+    public ServerResponse combine(@RequestBody FundDto fundDto) {
+        List<String> list = Lists.newArrayList(Constant.FundOrderByType.BY_YIELD_OF_ONE_YEAR.getType(),
+                Constant.FundOrderByType.BY_YIELD_OF_TWO_YEAR.getType());
+        return ServerResponse.success(fundService.combine(list, fundDto));
     }
 
 }

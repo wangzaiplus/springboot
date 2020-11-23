@@ -1,5 +1,6 @@
 package com.wangzaiplus.test.mapper;
 
+import com.wangzaiplus.test.dto.FundDto;
 import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.batch.BatchProcessMapper;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,6 @@ public interface FundMapper extends BatchProcessMapper<Fund> {
 
     Fund selectByCodeAndType(Fund fund);
 
-    List<Fund> selectByType(Fund fund);
+    List<FundDto> selectByType(FundDto fundDto);
 
 }

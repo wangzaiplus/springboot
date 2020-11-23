@@ -92,7 +92,41 @@ public class Constant {
             FundType[] values = FundType.values();
             return Arrays.stream(values).filter(fundType -> fundType.getCode() == code).findAny().isPresent();
         }
+    }
 
+    public enum FundOrderByType {
+        BY_NET_VALUE("net_value"),
+        BY_YIELD_OF_ONE_YEAR("yield_of_one_year"),
+        BY_YIELD_OF_TWO_YEAR("yield_of_two_year"),
+        BY_YIELD_OF_THREE_YEAR("yield_of_three_year"),
+        BY_YIELD_OF_FIVE_YEAR("yield_of_five_year")
+        ;
+
+        private String type;
+
+        FundOrderByType(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
+
+    public enum FundSortType {
+        ASC("asc"),
+        DESC("desc"),
+        ;
+
+        private String type;
+
+        FundSortType(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 
 }

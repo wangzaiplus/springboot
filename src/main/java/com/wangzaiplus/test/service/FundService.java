@@ -1,17 +1,15 @@
 package com.wangzaiplus.test.service;
 
 import com.wangzaiplus.test.dto.FundDto;
-import com.wangzaiplus.test.pojo.Fund;
 
 import java.util.List;
-import java.util.Set;
 
 public interface FundService {
 
-    Set<FundDto> combine(int[] earnings, Integer year);
+    List<FundDto> search(FundDto fundDto);
+
+    List<FundDto> combine(List<String> list, FundDto fundDto);
 
     void update(List<FundDto> list);
-
-    List<Fund> selectByType(FundDto fundDto);
 
 }

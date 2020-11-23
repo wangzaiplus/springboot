@@ -94,7 +94,12 @@
         },
         mounted() {
             axios.post('http://localhost:8080/fund/search', {
-                type: 5
+                type: 5,
+                code: "",
+                name: "",
+                orderBy: "yield_of_two_year",
+                sort: "desc",
+                limit: 5
             }).then(function (response) {
                 vue.tableData = response.data.data;
                 console.log("search success");
