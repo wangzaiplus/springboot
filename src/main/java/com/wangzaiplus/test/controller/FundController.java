@@ -1,7 +1,5 @@
 package com.wangzaiplus.test.controller;
 
-import com.google.common.collect.Lists;
-import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.dto.FundDto;
 import com.wangzaiplus.test.service.FundService;
@@ -38,9 +36,7 @@ public class FundController {
 
     @PostMapping("combine")
     public ServerResponse combine(@RequestBody FundDto fundDto) {
-        List<String> list = Lists.newArrayList(Constant.FundOrderByType.BY_YIELD_OF_ONE_YEAR.getType(),
-                Constant.FundOrderByType.BY_YIELD_OF_TWO_YEAR.getType());
-        return ServerResponse.success(fundService.combine(list, fundDto));
+        return ServerResponse.success(fundService.combine(fundDto));
     }
 
 }

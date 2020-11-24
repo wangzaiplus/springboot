@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -23,7 +24,8 @@ public class FundServiceImpl implements FundService {
     private FundMapper fundMapper;
 
     @Override
-    public List<FundDto> combine(List<String> list, FundDto fundDto) {
+    public List<FundDto> combine(FundDto fundDto) {
+        List<String> list = fundDto.getOrderByList();
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
@@ -36,7 +38,8 @@ public class FundServiceImpl implements FundService {
                     .sort(Constant.FundSortType.DESC.getType())
                     .limit(fundDto.getLimit())
                     .build();
-            lists.add(fundMapper.selectByType(dto));
+            List<Fund> fundList = fundMapper.selectByType(dto);
+            lists.add(toFundDtoList(fundList));
         }
 
         ListUtils listUtils = new ListUtils<FundDto>();
@@ -64,13 +67,26 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public List<FundDto> search(FundDto fundDto) {
-        return fundMapper.selectByType(fundDto);
+        List<Fund> fundList = fundMapper.selectByType(fundDto);
+        return toFundDtoList(fundList);
     }
 
     private Fund toFund(FundDto fundDto) {
         Fund fund = Fund.builder().build();
         BeanUtils.copyProperties(fundDto, fund);
         return fund;
+    }
+
+    private List<FundDto> toFundDtoList(List<Fund> fundList) {
+        if (CollectionUtils.isEmpty(fundList)) {
+            return null;
+        }
+
+        return fundList.stream().map(fund -> {
+            FundDto fundDto = FundDto.builder().build();
+            BeanUtils.copyProperties(fund, fundDto);
+            return fundDto;
+        }).collect(Collectors.toList());
     }
 
 }

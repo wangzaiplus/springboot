@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -41,6 +42,8 @@ public class FundDto {
     private String orderBy;
     private String sort;
     private Integer limit;
+
+    List<String> orderByList;
 
     @Override
     public boolean equals(Object obj) {

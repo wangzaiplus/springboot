@@ -8,7 +8,7 @@ public interface FundService {
 
     List<FundDto> search(FundDto fundDto);
 
-    List<FundDto> combine(List<String> list, FundDto fundDto);
+    List<FundDto> combine(FundDto fundDto);
 
     void update(List<FundDto> list);
 
