@@ -1,6 +1,12 @@
 package com.wangzaiplus.test.common;
 
+import com.wangzaiplus.test.dto.FundRankDto;
+import com.wangzaiplus.test.dto.FundTypeDto;
+import com.wangzaiplus.test.dto.FundYieldDto;
+
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Constant {
 
@@ -72,44 +78,105 @@ public class Constant {
         QDII(5, "QDII")
         ;
 
-        private Integer code;
-        private String msg;
+        private Integer type;
+        private String desc;
 
-        FundType(Integer code, String msg) {
-            this.code = code;
-            this.msg = msg;
+        FundType(Integer type, String desc) {
+            this.type = type;
+            this.desc = desc;
         }
 
-        public Integer getCode() {
-            return code;
+        public Integer getType() {
+            return type;
         }
 
-        public String getMsg() {
-            return msg;
+        public String getDesc() {
+            return desc;
         }
 
         public static boolean contains(Integer code) {
             FundType[] values = FundType.values();
-            return Arrays.stream(values).filter(fundType -> fundType.getCode() == code).findAny().isPresent();
+            return Arrays.stream(values).filter(fundType -> fundType.getType() == code).findAny().isPresent();
+        }
+
+        public static List<FundTypeDto> getTypeList() {
+            FundType[] values = FundType.values();
+            return Arrays.stream(values).map(fundType ->
+                FundTypeDto.builder()
+                    .type(fundType.getType())
+                    .desc(fundType.getDesc())
+                    .build()
+            ).collect(Collectors.toList());
         }
     }
 
-    public enum FundOrderByType {
-        BY_NET_VALUE("net_value"),
-        BY_YIELD_OF_ONE_YEAR("yield_of_one_year"),
-        BY_YIELD_OF_TWO_YEAR("yield_of_two_year"),
-        BY_YIELD_OF_THREE_YEAR("yield_of_three_year"),
-        BY_YIELD_OF_FIVE_YEAR("yield_of_five_year")
+    public enum FundYield {
+        YIELD_OF_ONE_YEAR("yield_of_one_year", "近1年收益率"),
+        YIELD_OF_TWO_YEAR("yield_of_two_year", "近2年收益率"),
+        YIELD_OF_THREE_YEAR("yield_of_three_year", "近3年收益率"),
+        YIELD_OF_FIVE_YEAR("yield_of_five_year", "近5年收益率")
         ;
 
-        private String type;
+        private String yield;
+        private String desc;
 
-        FundOrderByType(String type) {
-            this.type = type;
+        FundYield(String yield, String desc) {
+            this.yield = yield;
+            this.desc = desc;
         }
 
-        public String getType() {
-            return type;
+        public String getYield() {
+            return yield;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static List<FundYieldDto> getYieldList() {
+            FundYield[] values = FundYield.values();
+            return Arrays.stream(values).map(fundYield ->
+                FundYieldDto.builder()
+                    .yield(fundYield.getYield())
+                    .desc(fundYield.getDesc())
+                    .build()
+            ).collect(Collectors.toList());
+        }
+    }
+
+    public enum FundRank {
+        TOP_50(50, "前50"),
+        TOP_100(100, "前100"),
+        TOP_150(150, "前150"),
+        TOP_200(200, "前200"),
+        TOP_250(250, "前250"),
+        TOP_300(300, "前300")
+        ;
+
+        private Integer rank;
+        private String desc;
+
+        FundRank(Integer rank, String desc) {
+            this.rank = rank;
+            this.desc = desc;
+        }
+
+        public Integer getRank() {
+            return rank;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public static List<FundRankDto> getRankList() {
+            FundRank[] values = FundRank.values();
+            return Arrays.stream(values).map(rank ->
+                    FundRankDto.builder()
+                            .rank(rank.getRank())
+                            .desc(rank.getDesc())
+                            .build()
+            ).collect(Collectors.toList());
         }
     }
 

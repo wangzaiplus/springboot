@@ -2,6 +2,7 @@ package com.wangzaiplus.test.controller;
 
 import com.wangzaiplus.test.common.ServerResponse;
 import com.wangzaiplus.test.dto.FundDto;
+import com.wangzaiplus.test.dto.SearchFormDto;
 import com.wangzaiplus.test.service.FundService;
 import com.wangzaiplus.test.util.FundUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +29,20 @@ public class FundController {
         return ServerResponse.success();
     }
 
-    @PostMapping("search")
-    public ServerResponse search(@RequestBody FundDto fundDto) {
-        List<FundDto> list = fundService.search(fundDto);
+    @PostMapping("rank")
+    public ServerResponse rank(@RequestBody FundDto fundDto) {
+        List<FundDto> list = fundService.rank(fundDto);
         return ServerResponse.success(list);
     }
 
-    @PostMapping("combine")
-    public ServerResponse combine(@RequestBody FundDto fundDto) {
-        return ServerResponse.success(fundService.combine(fundDto));
+    @PostMapping("search")
+    public ServerResponse search(@RequestBody SearchFormDto searchFormDto) {
+        return fundService.search(searchFormDto);
+    }
+
+    @PostMapping("getSearchFormDto")
+    public ServerResponse getSearchFormDto() {
+        return fundService.getSearchFormDto();
     }
 
 }

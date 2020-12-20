@@ -186,4 +186,16 @@
         </if>
     </select>
 
+    <select id="selectFundTypeList" resultType="int">
+        SELECT
+            rank
+        FROM
+            fund
+        WHERE
+            STATUS = 1
+        AND is_deleted = 0
+        GROUP BY
+            rank
+    </select>
+
 </mapper>

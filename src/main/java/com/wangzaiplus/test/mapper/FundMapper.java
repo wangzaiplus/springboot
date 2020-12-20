@@ -24,4 +24,6 @@ public interface FundMapper extends BatchProcessMapper<Fund> {
 
     List<Fund> selectByType(FundDto fundDto);
 
+    List<Integer> selectFundTypeList();
+
 }
