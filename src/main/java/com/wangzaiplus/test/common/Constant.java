@@ -149,8 +149,6 @@ public class Constant {
         TOP_100(100, "前100"),
         TOP_150(150, "前150"),
         TOP_200(200, "前200"),
-        TOP_250(250, "前250"),
-        TOP_300(300, "前300")
         ;
 
         private Integer rank;

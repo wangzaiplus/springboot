@@ -41,7 +41,9 @@ public class FundServiceImpl implements FundService {
                     .limit(searchFormDto.getRankList().get(Constant.INDEX_ZERO).getRank())
                     .build();
             List<Fund> fundList = fundMapper.selectByType(dto);
-            lists.add(toFundDtoList(fundList));
+            if (CollectionUtils.isNotEmpty(fundList)) {
+                lists.add(toFundDtoList(fundList));
+            }
         }
 
         ListUtils listUtils = new ListUtils<FundDto>();
