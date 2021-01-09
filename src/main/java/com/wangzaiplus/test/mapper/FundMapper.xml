@@ -172,18 +172,9 @@
         select <include refid="Base_Column_List"/>
         from fund
         where type = #{type}
-        <if test="code != null and code != ''">
-            and code = #{code}
-        </if>
-        <if test="name != null and name != ''">
-            and name = #{name}
-        </if>
-        <if test="orderBy != null and orderBy != ''">
-            order by ${orderBy} ${sort}
-        </if>
-        <if test="limit != null and limit != ''">
-            limit ${limit}
-        </if>
+        and status = 1
+        and is_deleted = 0
+        order by ${orderBy} + 0 desc
     </select>
 
     <select id="selectFundTypeList" resultType="int">
@@ -196,6 +187,17 @@
         AND is_deleted = 0
         GROUP BY
             rank
+    </select>
+
+    <select id="selectByNameOrCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from fund
+        where code = #{nameOrCode}
+        or name like concat('%', #{nameOrCode}, '%')
+        and status = 1
+        and is_deleted = 0
+        order by created_time desc
+        limit 100
     </select>
 
 </mapper>

@@ -9,6 +9,8 @@ import com.wangzaiplus.test.exception.ServiceException;
 import com.wangzaiplus.test.mapper.FundMapper;
 import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
+import com.wangzaiplus.test.util.JedisUtil;
+import com.wangzaiplus.test.util.JsonUtil;
 import com.wangzaiplus.test.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,7 +18,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,9 @@ public class FundServiceImpl implements FundService {
 
     @Autowired
     private FundMapper fundMapper;
+
+    @Autowired
+    private JedisUtil jedisUtil;
 
     @Override
     public ServerResponse search(SearchFormDto searchFormDto) {
@@ -37,8 +41,6 @@ public class FundServiceImpl implements FundService {
             FundDto dto = FundDto.builder()
                     .type(searchFormDto.getTypeList().get(Constant.INDEX_ZERO).getType())
                     .orderBy(yield.getYield())
-                    .sort(Constant.FundSortType.DESC.getType())
-                    .limit(searchFormDto.getRankList().get(Constant.INDEX_ZERO).getRank())
                     .build();
             List<Fund> fundList = fundMapper.selectByType(dto);
             if (CollectionUtils.isNotEmpty(fundList)) {
@@ -87,9 +89,9 @@ public class FundServiceImpl implements FundService {
     }
 
     @Override
-    public List<FundDto> rank(FundDto fundDto) {
-        List<Fund> fundList = fundMapper.selectByType(fundDto);
-        return toFundDtoList(fundList);
+    public ServerResponse rank(FundDto fundDto) {
+        List<Fund> fundList = fundMapper.selectByNameOrCode(fundDto);
+        return ServerResponse.success(toFundDtoList(fundList));
     }
 
     private Fund toFund(FundDto fundDto) {
@@ -118,6 +120,31 @@ public class FundServiceImpl implements FundService {
                 .rankList(Constant.FundRank.getRankList())
                 .build();
         return ServerResponse.success(searchFormDto);
+    }
+
+    public List<FundDto> getFundListByType() {
+        List<FundTypeDto> typeList = Constant.FundType.getTypeList();
+        List<FundYieldDto> yieldList = Constant.FundYield.getYieldList();
+        if (CollectionUtils.isEmpty(typeList) || CollectionUtils.isEmpty(yieldList)) {
+            return null;
+        }
+
+        typeList.stream().forEach(type -> {
+            yieldList.stream().forEach(yield -> {
+                Integer fundType = type.getType();
+                String fundYield = yield.getYield();
+                FundDto build = FundDto.builder().type(fundType).orderBy(fundYield).build();
+                List<Fund> fundList = fundMapper.selectByType(build);
+                if (CollectionUtils.isEmpty(fundList)) {
+                    return;
+                }
+
+                String value = JsonUtil.objToStr(toFundDtoList(fundList));
+                jedisUtil.set(fundType + ":" + fundYield, value);
+            });
+        });
+
+        return null;
     }
 
 }

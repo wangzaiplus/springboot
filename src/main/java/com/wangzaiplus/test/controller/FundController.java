@@ -31,8 +31,7 @@ public class FundController {
 
     @PostMapping("rank")
     public ServerResponse rank(@RequestBody FundDto fundDto) {
-        List<FundDto> list = fundService.rank(fundDto);
-        return ServerResponse.success(list);
+        return fundService.rank(fundDto);
     }
 
     @PostMapping("search")

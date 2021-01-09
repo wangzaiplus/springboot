@@ -45,6 +45,8 @@ public class FundDto {
 
     List<String> orderByList;
 
+    private String nameOrCode;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

@@ -94,9 +94,9 @@ public class Constant {
             return desc;
         }
 
-        public static boolean contains(Integer code) {
+        public static boolean contains(Integer type) {
             FundType[] values = FundType.values();
-            return Arrays.stream(values).filter(fundType -> fundType.getType() == code).findAny().isPresent();
+            return Arrays.stream(values).filter(fundType -> fundType.getType() == type).findAny().isPresent();
         }
 
         public static List<FundTypeDto> getTypeList() {
@@ -131,6 +131,11 @@ public class Constant {
 
         public String getDesc() {
             return desc;
+        }
+
+        public static boolean contains(String yield) {
+            FundYield[] values = FundYield.values();
+            return Arrays.stream(values).filter(fundYield -> fundYield.getYield().equals(yield)).findAny().isPresent();
         }
 
         public static List<FundYieldDto> getYieldList() {
