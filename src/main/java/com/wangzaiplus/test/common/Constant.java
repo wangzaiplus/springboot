@@ -26,6 +26,8 @@ public class Constant {
         String TOKEN_PREFIX = "token:";
         String MSG_CONSUMER_PREFIX = "consumer:";
         String ACCESS_LIMIT_PREFIX = "accessLimit:";
+        String FUND_RANK = "fundRank:";
+        String FUND_LIST = "fundList:";
     }
 
     public interface LogType {

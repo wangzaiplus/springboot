@@ -90,6 +90,7 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public ServerResponse rank(FundDto fundDto) {
+        getFundListByType();
         List<Fund> fundList = fundMapper.selectByNameOrCode(fundDto);
         return ServerResponse.success(toFundDtoList(fundList));
     }
@@ -139,8 +140,14 @@ public class FundServiceImpl implements FundService {
                     return;
                 }
 
+                for (int i = 0; i < fundList.size(); i++) {
+                    Fund fund = fundList.get(i);
+                    Integer id = fund.getId();
+                    jedisUtil.set(Constant.Redis.FUND_RANK + id, (i + 1) +"");
+                }
+
                 String value = JsonUtil.objToStr(toFundDtoList(fundList));
-                jedisUtil.set(fundType + ":" + fundYield, value);
+                jedisUtil.set(Constant.Redis.FUND_LIST + fundType + ":" + fundYield, value);
             });
         });
 
