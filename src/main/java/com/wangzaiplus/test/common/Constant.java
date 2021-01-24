@@ -6,6 +6,7 @@ import com.wangzaiplus.test.dto.FundYieldDto;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Constant {
@@ -16,6 +17,9 @@ public class Constant {
     public static final int NUMBER_ONE = 1;
 
     public static final String COLON = ":";
+    public static final String DOUBLE_STRIGULA = "--";
+
+    public static final String UNKNOWN_TYPE = "未知类型";
 
     public interface Redis {
         String OK = "OK";
@@ -111,6 +115,13 @@ public class Constant {
                     .desc(fundType.getDesc())
                     .build()
             ).collect(Collectors.toList());
+        }
+
+        public static String getDescByType(Integer type) {
+            FundType[] values = FundType.values();
+            Optional<FundType> first = Arrays.stream(values).filter(fundType -> fundType.getType() == type).findFirst();
+            boolean exists = first.isPresent();
+            return exists ? first.get().getDesc() : UNKNOWN_TYPE;
         }
     }
 

@@ -32,6 +32,7 @@ public class FundDto {
     @ColNum(colNum = 7)
     private String yieldOfFiveYear;
     private int type;
+    private String typeDesc;
     private Date establishedTime;
     private String asset;
     private String manager;
@@ -48,10 +49,10 @@ public class FundDto {
 
     private String nameOrCode;
     private Integer tempRank;
-    private String rankOfOneYear;
-    private String rankOfTwoYear;
-    private String rankOfThreeYear;
-    private String rankOfFiveYear;
+    private String rankOne;
+    private String rankTwo;
+    private String rankThree;
+    private String rankFive;
 
     @Override
     public boolean equals(Object obj) {

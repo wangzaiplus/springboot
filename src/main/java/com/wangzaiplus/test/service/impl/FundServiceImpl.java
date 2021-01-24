@@ -88,7 +88,24 @@ public class FundServiceImpl implements FundService {
     @Override
     public ServerResponse rank(FundDto fundDto) {
         List<Fund> fundList = fundMapper.selectByNameOrCode(fundDto);
-        return ServerResponse.success(toFundDtoList(fundList));
+        if (CollectionUtils.isEmpty(fundList)) {
+            return ServerResponse.success();
+        }
+
+        List<FundDto> fundDtoList = toFundDtoList(fundList);
+        List<FundDto> list = fundDtoList.stream().map(dto -> {
+            int type = dto.getType();
+            Integer id = dto.getId();
+
+            dto.setRankOne(getRankOne(type, id));
+            dto.setRankTwo(getRankTwo(type, id));
+            dto.setRankThree(getRankThree(type, id));
+            dto.setRankFive(getRankFive(type, id));
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        return ServerResponse.success(list);
     }
 
     private Fund toFund(FundDto fundDto) {
@@ -105,8 +122,39 @@ public class FundServiceImpl implements FundService {
         return fundList.stream().map(fund -> {
             FundDto fundDto = FundDto.builder().build();
             BeanUtils.copyProperties(fund, fundDto);
+            fundDto.setTypeDesc(Constant.FundType.getDescByType(fundDto.getType()));
             return fundDto;
         }).collect(Collectors.toList());
+    }
+
+    private String getRankOne(Integer type, Integer id) {
+        return getRank(type, Constant.FundYield.YIELD_OF_ONE_YEAR.getYield(), id);
+    }
+
+    private String getRankTwo(Integer type, Integer id) {
+        return getRank(type, Constant.FundYield.YIELD_OF_TWO_YEAR.getYield(), id);
+    }
+
+    private String getRankThree(Integer type, Integer id) {
+        return getRank(type, Constant.FundYield.YIELD_OF_THREE_YEAR.getYield(), id);
+    }
+
+    private String getRankFive(Integer type, Integer id) {
+        return getRank(type, Constant.FundYield.YIELD_OF_FIVE_YEAR.getYield(), id);
+    }
+
+    private String getRank(Integer type, String yield, Integer id) {
+        // TODO 作为参数传入，从redis加载
+        Map<String, Integer> map = loadFundRankMap();
+        if (null == map || map.size() == 0) {
+            return Constant.DOUBLE_STRIGULA;
+        }
+
+        String key = getFundListRedisKey(type, yield);
+        String prefix = getFundRankRedisKey(key, id);
+
+        Integer rank = map.get(prefix);
+        return null == rank ? Constant.DOUBLE_STRIGULA : rank.toString();
     }
 
     @Override
