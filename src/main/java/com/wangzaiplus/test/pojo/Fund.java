@@ -30,4 +30,6 @@ public class Fund {
     private Date createdTime;
     private Date updatedTime;
 
+    private Integer tempRank;
+
 }

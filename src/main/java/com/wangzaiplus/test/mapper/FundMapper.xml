@@ -18,6 +18,7 @@
         <result column="is_deleted" property="isDeleted"/>
         <result column="created_time" property="createdTime"/>
         <result column="updated_time" property="updatedTime"/>
+        <result column="tempRank" property="tempRank"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -169,8 +170,8 @@
     </select>
 
     <select id="selectByType" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
-        from fund
+        select <include refid="Base_Column_List"/>, (@i:=@i+1) tempRank
+        from fund, (SELECT @i:=0) j
         where type = #{type}
         and status = 1
         and is_deleted = 0

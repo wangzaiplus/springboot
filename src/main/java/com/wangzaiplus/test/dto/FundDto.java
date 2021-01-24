@@ -16,6 +16,7 @@ import java.util.Objects;
 @Builder
 public class FundDto {
 
+    private Integer id;
     @ColNum(colNum = 1)
     private String code;
     @ColNum(colNum = 2)
@@ -46,6 +47,11 @@ public class FundDto {
     List<String> orderByList;
 
     private String nameOrCode;
+    private Integer tempRank;
+    private String rankOfOneYear;
+    private String rankOfTwoYear;
+    private String rankOfThreeYear;
+    private String rankOfFiveYear;
 
     @Override
     public boolean equals(Object obj) {

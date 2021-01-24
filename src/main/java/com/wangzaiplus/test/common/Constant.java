@@ -15,6 +15,8 @@ public class Constant {
     public static final int NUMBER_ZERO = 0;
     public static final int NUMBER_ONE = 1;
 
+    public static final String COLON = ":";
+
     public interface Redis {
         String OK = "OK";
         // 过期时间, 60s, 一分钟
@@ -26,8 +28,8 @@ public class Constant {
         String TOKEN_PREFIX = "token:";
         String MSG_CONSUMER_PREFIX = "consumer:";
         String ACCESS_LIMIT_PREFIX = "accessLimit:";
-        String FUND_RANK = "fundRank:";
-        String FUND_LIST = "fundList:";
+        String FUND_RANK = "fundRank";
+        String FUND_LIST = "fundList";
     }
 
     public interface LogType {

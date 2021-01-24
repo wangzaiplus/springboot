@@ -1,6 +1,7 @@
 package com.wangzaiplus.test.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.wangzaiplus.test.common.Constant;
 import com.wangzaiplus.test.common.ResponseCode;
 import com.wangzaiplus.test.common.ServerResponse;
@@ -9,8 +10,6 @@ import com.wangzaiplus.test.exception.ServiceException;
 import com.wangzaiplus.test.mapper.FundMapper;
 import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
-import com.wangzaiplus.test.util.JedisUtil;
-import com.wangzaiplus.test.util.JsonUtil;
 import com.wangzaiplus.test.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,9 +27,6 @@ public class FundServiceImpl implements FundService {
 
     @Autowired
     private FundMapper fundMapper;
-
-    @Autowired
-    private JedisUtil jedisUtil;
 
     @Override
     public ServerResponse search(SearchFormDto searchFormDto) {
@@ -90,7 +87,6 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public ServerResponse rank(FundDto fundDto) {
-        getFundListByType();
         List<Fund> fundList = fundMapper.selectByNameOrCode(fundDto);
         return ServerResponse.success(toFundDtoList(fundList));
     }
@@ -123,35 +119,52 @@ public class FundServiceImpl implements FundService {
         return ServerResponse.success(searchFormDto);
     }
 
-    public List<FundDto> getFundListByType() {
+    public Map<String, List<FundDto>> loadFundListMap() {
         List<FundTypeDto> typeList = Constant.FundType.getTypeList();
         List<FundYieldDto> yieldList = Constant.FundYield.getYieldList();
         if (CollectionUtils.isEmpty(typeList) || CollectionUtils.isEmpty(yieldList)) {
-            return null;
+            throw new ServiceException("typeList or yieldList can not be empty");
         }
 
+        Map<String, List<FundDto>> map = Maps.newHashMap();
         typeList.stream().forEach(type -> {
             yieldList.stream().forEach(yield -> {
                 Integer fundType = type.getType();
                 String fundYield = yield.getYield();
+
                 FundDto build = FundDto.builder().type(fundType).orderBy(fundYield).build();
                 List<Fund> fundList = fundMapper.selectByType(build);
                 if (CollectionUtils.isEmpty(fundList)) {
                     return;
                 }
 
-                for (int i = 0; i < fundList.size(); i++) {
-                    Fund fund = fundList.get(i);
-                    Integer id = fund.getId();
-                    jedisUtil.set(Constant.Redis.FUND_RANK + id, (i + 1) +"");
-                }
-
-                String value = JsonUtil.objToStr(toFundDtoList(fundList));
-                jedisUtil.set(Constant.Redis.FUND_LIST + fundType + ":" + fundYield, value);
+                String key = getFundListRedisKey(fundType, fundYield);
+                List<FundDto> value = toFundDtoList(fundList);
+                map.put(key, value);
             });
         });
 
-        return null;
+        return map;
+    }
+
+    public Map<String, Integer> loadFundRankMap() {
+        Map<String, List<FundDto>> fundListMap = loadFundListMap();
+        if (null == fundListMap || fundListMap.size() == 0) {
+            return null;
+        }
+
+        Map<String, Integer> map = Maps.newHashMap();
+        fundListMap.forEach((key, value) -> value.stream().forEach(dto -> map.put(getFundRankRedisKey(key, dto.getId()), dto.getTempRank())));
+
+        return map;
+    }
+
+    private String getFundRankRedisKey(String key, Integer id) {
+        return key.replace(Constant.Redis.FUND_LIST, Constant.Redis.FUND_RANK) + Constant.COLON + id;
+    }
+
+    private String getFundListRedisKey(Integer type, String yield) {
+        return Constant.Redis.FUND_LIST + Constant.COLON + type + Constant.COLON + yield;
     }
 
 }
