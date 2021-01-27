@@ -31,7 +31,10 @@ public class FundController {
 
     @PostMapping("rank")
     public ServerResponse rank(@RequestBody FundDto fundDto) {
-        return fundService.rank(fundDto);
+        long start = System.currentTimeMillis();
+        ServerResponse response = fundService.rank(fundDto);
+        log.info("rank costs: {} ms", System.currentTimeMillis() - start);
+        return response;
     }
 
     @PostMapping("search")

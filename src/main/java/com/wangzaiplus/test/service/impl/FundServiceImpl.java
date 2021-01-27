@@ -10,13 +10,16 @@ import com.wangzaiplus.test.exception.ServiceException;
 import com.wangzaiplus.test.mapper.FundMapper;
 import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
+import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.ListUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,6 +30,9 @@ public class FundServiceImpl implements FundService {
 
     @Autowired
     private FundMapper fundMapper;
+
+    @Autowired
+    private JedisUtil jedisUtil;
 
     @Override
     public ServerResponse search(SearchFormDto searchFormDto) {
@@ -93,19 +99,25 @@ public class FundServiceImpl implements FundService {
         }
 
         List<FundDto> fundDtoList = toFundDtoList(fundList);
-        List<FundDto> list = fundDtoList.stream().map(dto -> {
+        List<FundDto> list = addRankInfo(fundDtoList);
+
+        return ServerResponse.success(list);
+    }
+
+    private List<FundDto> addRankInfo(List<FundDto> fundDtoList) {
+        return fundDtoList.stream().map(dto -> {
             int type = dto.getType();
             Integer id = dto.getId();
 
-            dto.setRankOne(getRankOne(type, id));
-            dto.setRankTwo(getRankTwo(type, id));
-            dto.setRankThree(getRankThree(type, id));
-            dto.setRankFive(getRankFive(type, id));
+            List<String> rankList = getRank(type, id);
+
+            dto.setRankOne(rankList.get(Constant.INDEX_ZERO));
+            dto.setRankTwo(rankList.get(Constant.INDEX_TWO));
+            dto.setRankThree(rankList.get(Constant.INDEX_THRESS));
+            dto.setRankFive(rankList.get(Constant.INDEX_FOUR));
 
             return dto;
         }).collect(Collectors.toList());
-
-        return ServerResponse.success(list);
     }
 
     private Fund toFund(FundDto fundDto) {
@@ -127,34 +139,47 @@ public class FundServiceImpl implements FundService {
         }).collect(Collectors.toList());
     }
 
-    private String getRankOne(Integer type, Integer id) {
-        return getRank(type, Constant.FundYield.YIELD_OF_ONE_YEAR.getYield(), id);
-    }
+    private List<String> getRank(Integer type, Integer id) {
+        String prefix = getFundRankPrefix(type, id);
 
-    private String getRankTwo(Integer type, Integer id) {
-        return getRank(type, Constant.FundYield.YIELD_OF_TWO_YEAR.getYield(), id);
-    }
-
-    private String getRankThree(Integer type, Integer id) {
-        return getRank(type, Constant.FundYield.YIELD_OF_THREE_YEAR.getYield(), id);
-    }
-
-    private String getRankFive(Integer type, Integer id) {
-        return getRank(type, Constant.FundYield.YIELD_OF_FIVE_YEAR.getYield(), id);
-    }
-
-    private String getRank(Integer type, String yield, Integer id) {
-        // TODO 作为参数传入，从redis加载
-        Map<String, Integer> map = loadFundRankMap();
-        if (null == map || map.size() == 0) {
-            return Constant.DOUBLE_STRIGULA;
+        String rankStr = jedisUtil.get(prefix);
+        if (StringUtils.isNotBlank(rankStr)) {
+            return toRankList(rankStr);
         }
 
-        String key = getFundListRedisKey(type, yield);
-        String prefix = getFundRankRedisKey(key, id);
+        Map<String, String> map = loadFundRankMapByType(type);
+        if (null == map || map.size() == 0) {
+            return emptyRankList();
+        }
 
-        Integer rank = map.get(prefix);
-        return null == rank ? Constant.DOUBLE_STRIGULA : rank.toString();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            if (prefix.equals(key)) {
+                return toRankList(value);
+            }
+        }
+
+        return emptyRankList();
+    }
+
+    private List<String> toRankList(String rankStr) {
+        if (StringUtils.isBlank(rankStr)) {
+            return emptyRankList();
+        }
+
+        String[] split = rankStr.split(Constant.COMMA);
+        if (null == split || split.length != 4) {
+            log.error("error rankStr: {}", rankStr);
+            return emptyRankList();
+        }
+
+        return Arrays.asList(split);
+    }
+
+    private List<String> emptyRankList() {
+        return Lists.newArrayList(Constant.DOUBLE_STRIGULA, Constant.DOUBLE_STRIGULA, Constant.DOUBLE_STRIGULA, Constant.DOUBLE_STRIGULA);
     }
 
     @Override
@@ -167,52 +192,50 @@ public class FundServiceImpl implements FundService {
         return ServerResponse.success(searchFormDto);
     }
 
-    public Map<String, List<FundDto>> loadFundListMap() {
-        List<FundTypeDto> typeList = Constant.FundType.getTypeList();
-        List<FundYieldDto> yieldList = Constant.FundYield.getYieldList();
-        if (CollectionUtils.isEmpty(typeList) || CollectionUtils.isEmpty(yieldList)) {
-            throw new ServiceException("typeList or yieldList can not be empty");
-        }
-
-        Map<String, List<FundDto>> map = Maps.newHashMap();
-        typeList.stream().forEach(type -> {
-            yieldList.stream().forEach(yield -> {
-                Integer fundType = type.getType();
-                String fundYield = yield.getYield();
-
-                FundDto build = FundDto.builder().type(fundType).orderBy(fundYield).build();
-                List<Fund> fundList = fundMapper.selectByType(build);
-                if (CollectionUtils.isEmpty(fundList)) {
-                    return;
-                }
-
-                String key = getFundListRedisKey(fundType, fundYield);
-                List<FundDto> value = toFundDtoList(fundList);
-                map.put(key, value);
-            });
-        });
-
-        return map;
-    }
-
-    public Map<String, Integer> loadFundRankMap() {
-        Map<String, List<FundDto>> fundListMap = loadFundListMap();
-        if (null == fundListMap || fundListMap.size() == 0) {
+    public Map<String, String> loadFundRankMapByType(Integer type) {
+        if (!Constant.FundType.contains(type)) {
+            log.error("type error: {}", type);
             return null;
         }
 
-        Map<String, Integer> map = Maps.newHashMap();
-        fundListMap.forEach((key, value) -> value.stream().forEach(dto -> map.put(getFundRankRedisKey(key, dto.getId()), dto.getTempRank())));
+        List<FundYieldDto> yieldList = Constant.FundYield.getYieldList();
+        if (CollectionUtils.isEmpty(yieldList)) {
+            throw new ServiceException("yieldList can't be empty");
+        }
+
+        Map<String, String> map = Maps.newHashMap();
+        yieldList.stream().forEach(yield -> {
+            String fundYield = yield.getYield();
+
+            FundDto build = FundDto.builder().type(type).orderBy(fundYield).build();
+            List<Fund> fundList = fundMapper.selectTempRankByType(build);
+            if (CollectionUtils.isEmpty(fundList)) {
+                return;
+            }
+
+            List<FundDto> list = toFundDtoList(fundList);
+            list.stream().forEach(dto -> {
+                Integer id = dto.getId();
+                String key = getFundRankPrefix(type, id);
+                String value = map.get(key);
+                Integer tempRank = dto.getTempRank();
+
+                if (StringUtils.isBlank(value)) {
+                    map.put(key, String.valueOf(tempRank));
+                } else {
+                    value = value + Constant.COMMA + tempRank;
+                    map.put(key, value);
+                }
+            });
+        });
+
+        map.forEach((key, value) -> jedisUtil.set(key, value));
 
         return map;
     }
 
-    private String getFundRankRedisKey(String key, Integer id) {
-        return key.replace(Constant.Redis.FUND_LIST, Constant.Redis.FUND_RANK) + Constant.COLON + id;
-    }
-
-    private String getFundListRedisKey(Integer type, String yield) {
-        return Constant.Redis.FUND_LIST + Constant.COLON + type + Constant.COLON + yield;
+    private String getFundRankPrefix(Integer type, Integer id) {
+        return Constant.Redis.FUND_RANK + Constant.COLON + type + Constant.COLON + id;
     }
 
 }

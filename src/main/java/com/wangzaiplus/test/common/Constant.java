@@ -13,10 +13,15 @@ public class Constant {
 
     public static final int MAX_SIZE_PER_TIME = 1000;
     public static final int INDEX_ZERO = 0;
+    public static final int INDEX_TWO = 1;
+    public static final int INDEX_THRESS = 2;
+    public static final int INDEX_FOUR = 3;
+
     public static final int NUMBER_ZERO = 0;
     public static final int NUMBER_ONE = 1;
 
     public static final String COLON = ":";
+    public static final String COMMA = ",";
     public static final String DOUBLE_STRIGULA = "--";
 
     public static final String UNKNOWN_TYPE = "未知类型";
