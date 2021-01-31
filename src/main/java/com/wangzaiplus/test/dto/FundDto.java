@@ -54,6 +54,9 @@ public class FundDto {
     private String rankThree;
     private String rankFive;
 
+    private Integer pageNum;
+    private Integer pageSize;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

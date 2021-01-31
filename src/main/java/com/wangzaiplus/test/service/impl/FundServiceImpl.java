@@ -1,5 +1,7 @@
 package com.wangzaiplus.test.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.wangzaiplus.test.common.Constant;
@@ -12,6 +14,7 @@ import com.wangzaiplus.test.pojo.Fund;
 import com.wangzaiplus.test.service.FundService;
 import com.wangzaiplus.test.util.JedisUtil;
 import com.wangzaiplus.test.util.ListUtils;
+import com.wangzaiplus.test.util.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -93,15 +96,33 @@ public class FundServiceImpl implements FundService {
 
     @Override
     public ServerResponse rank(FundDto fundDto) {
+        checkPageInfo(fundDto);
+
+        PageHelper.startPage(fundDto.getPageNum(), fundDto.getPageSize());
         List<Fund> fundList = fundMapper.selectByNameOrCode(fundDto);
-        if (CollectionUtils.isEmpty(fundList)) {
+        PageInfo<Fund> pageInfo = new PageInfo<>(fundList);
+
+        List<Fund> pageInfoList = pageInfo.getList();
+        if (CollectionUtils.isEmpty(pageInfoList)) {
             return ServerResponse.success();
         }
 
-        List<FundDto> fundDtoList = toFundDtoList(fundList);
+        List<FundDto> fundDtoList = toFundDtoList(pageInfoList);
         List<FundDto> list = addRankInfo(fundDtoList);
 
-        return ServerResponse.success(list);
+        return ServerResponse.success(PageUtils.merge(pageInfo, list));
+    }
+
+    private void checkPageInfo(FundDto fundDto) {
+        boolean paramIsNull = null == fundDto || null == fundDto.getPageNum() || null == fundDto.getPageSize();
+        if (paramIsNull) {
+            throw new ServiceException(ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
+
+        boolean paramIsIllegal = fundDto.getPageNum() < Constant.NUMBER_ONE || fundDto.getPageSize() < Constant.NUMBER_ONE;
+        if (paramIsIllegal) {
+            throw new ServiceException(ResponseCode.ILLEGAL_ARGUMENT.getMsg());
+        }
     }
 
     private List<FundDto> addRankInfo(List<FundDto> fundDtoList) {

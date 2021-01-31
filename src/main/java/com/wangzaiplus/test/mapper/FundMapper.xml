@@ -207,7 +207,6 @@
         and status = 1
         and is_deleted = 0
         order by created_time desc
-        limit 100
     </select>
 
 </mapper>
