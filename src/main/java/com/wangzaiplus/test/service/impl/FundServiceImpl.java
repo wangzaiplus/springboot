@@ -47,6 +47,7 @@ public class FundServiceImpl implements FundService {
             FundDto dto = FundDto.builder()
                     .type(searchFormDto.getTypeList().get(Constant.INDEX_ZERO).getType())
                     .orderBy(yield.getYield())
+                    .limit(searchFormDto.getRankList().get(Constant.INDEX_ZERO).getRank())
                     .build();
             List<Fund> fundList = fundMapper.selectByType(dto);
             if (CollectionUtils.isNotEmpty(fundList)) {
@@ -57,7 +58,7 @@ public class FundServiceImpl implements FundService {
         ListUtils listUtils = new ListUtils<FundDto>();
         List intersection = listUtils.intersection(lists, true);
 
-        return ServerResponse.success(intersection);
+        return ServerResponse.success(addRankInfo(intersection));
     }
 
     private void check(SearchFormDto searchFormDto) {

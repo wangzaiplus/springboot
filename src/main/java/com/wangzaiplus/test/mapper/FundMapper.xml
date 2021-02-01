@@ -170,12 +170,13 @@
     </select>
 
     <select id="selectByType" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>, (@i:=@i+1) tempRank
-        from fund, (SELECT @i:=0) j
+        select <include refid="Base_Column_List"/>
+        from fund
         where type = #{type}
         and status = 1
         and is_deleted = 0
         order by ${orderBy} + 0 desc
+        limit ${limit}
     </select>
 
     <select id="selectTempRankByType" resultMap="BaseResultMap">
