@@ -27,6 +27,7 @@ public class FundUtils {
     private static final String QUESTION_MARK = "?";
     private static final String COLS_NUM = "3,4,6,8,9,10,11";
     private static final String PARAM_T = "t=";
+    private static final String PARAM_PAGE = "&page=1&psize=50000";
 
     public static final String FUND_URL = "http://fund.eastmoney.com/api/Dtshph.ashx";
 
@@ -58,7 +59,7 @@ public class FundUtils {
 
         OkHttpUtils httpUtils = SpringContextUtil.getBean(OkHttpUtils.class);
         try {
-            String response = httpUtils.doGet(FUND_URL + QUESTION_MARK + PARAM_T + type);
+            String response = httpUtils.doGet(FUND_URL + QUESTION_MARK + PARAM_T + type + PARAM_PAGE);
             List<List<String>> lists = parseTable(response);
             return extract(lists, COLS_NUM);
         } catch (Exception e) {

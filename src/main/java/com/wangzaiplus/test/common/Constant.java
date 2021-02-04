@@ -13,9 +13,9 @@ public class Constant {
 
     public static final int MAX_SIZE_PER_TIME = 1000;
     public static final int INDEX_ZERO = 0;
-    public static final int INDEX_TWO = 1;
-    public static final int INDEX_THRESS = 2;
-    public static final int INDEX_FOUR = 3;
+    public static final int INDEX_ONE = 1;
+    public static final int INDEX_TWO = 2;
+    public static final int INDEX_THREE = 3;
 
     public static final int NUMBER_ZERO = 0;
     public static final int NUMBER_ONE = 1;

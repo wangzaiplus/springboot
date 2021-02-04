@@ -133,10 +133,19 @@ public class FundServiceImpl implements FundService {
 
             List<String> rankList = getRank(type, id);
 
-            dto.setRankOne(rankList.get(Constant.INDEX_ZERO));
-            dto.setRankTwo(rankList.get(Constant.INDEX_TWO));
-            dto.setRankThree(rankList.get(Constant.INDEX_THRESS));
-            dto.setRankFive(rankList.get(Constant.INDEX_FOUR));
+            String rankOne = Constant.DOUBLE_STRIGULA.equals(dto.getYieldOfOneYear())
+                    ? Constant.DOUBLE_STRIGULA : rankList.get(Constant.INDEX_ZERO);
+            String rankTwo = Constant.DOUBLE_STRIGULA.equals(dto.getYieldOfTwoYear())
+                    ? Constant.DOUBLE_STRIGULA : rankList.get(Constant.INDEX_ONE);
+            String rankThree = Constant.DOUBLE_STRIGULA.equals(dto.getYieldOfThreeYear())
+                    ? Constant.DOUBLE_STRIGULA : rankList.get(Constant.INDEX_TWO);
+            String rankFive = Constant.DOUBLE_STRIGULA.equals(dto.getYieldOfFiveYear())
+                    ? Constant.DOUBLE_STRIGULA : rankList.get(Constant.INDEX_THREE);
+
+            dto.setRankOne(rankOne);
+            dto.setRankTwo(rankTwo);
+            dto.setRankThree(rankThree);
+            dto.setRankFive(rankFive);
 
             return dto;
         }).collect(Collectors.toList());
