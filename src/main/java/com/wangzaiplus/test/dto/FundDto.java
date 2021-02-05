@@ -57,6 +57,9 @@ public class FundDto {
     private Integer pageNum;
     private Integer pageSize;
 
+    private String replacementSource;
+    private String replacementTarget;
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

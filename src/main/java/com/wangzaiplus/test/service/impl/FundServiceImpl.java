@@ -238,7 +238,12 @@ public class FundServiceImpl implements FundService {
         yieldList.stream().forEach(yield -> {
             String fundYield = yield.getYield();
 
-            FundDto build = FundDto.builder().type(type).orderBy(fundYield).build();
+            FundDto build = FundDto.builder()
+                    .type(type)
+                    .orderBy(fundYield)
+                    .replacementSource(Constant.DOUBLE_STRIGULA)
+                    .replacementTarget(Constant.REPLACEMENT_TARGET)
+                    .build();
             List<Fund> fundList = fundMapper.selectTempRankByType(build);
             if (CollectionUtils.isEmpty(fundList)) {
                 return;

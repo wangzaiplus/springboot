@@ -23,6 +23,7 @@ public class Constant {
     public static final String COLON = ":";
     public static final String COMMA = ",";
     public static final String DOUBLE_STRIGULA = "--";
+    public static final String REPLACEMENT_TARGET = "-99999%";
 
     public static final String UNKNOWN_TYPE = "未知类型";
 

@@ -185,7 +185,7 @@
         where type = #{type}
         and status = 1
         and is_deleted = 0
-        order by ${orderBy} + 0 desc
+        order by replace(${orderBy}, #{replacementSource}, #{replacementTarget}) + 0 desc
     </select>
 
     <select id="selectFundTypeList" resultType="int">
