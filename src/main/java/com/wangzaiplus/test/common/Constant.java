@@ -174,6 +174,7 @@ public class Constant {
         TOP_50(50, "前50"),
         TOP_100(100, "前100"),
         TOP_150(150, "前150"),
+        TOP_200(200, "前200"),
         ;
 
         private Integer rank;
