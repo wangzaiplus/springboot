@@ -1,4 +1,4 @@
-package com.wangzaiplus.test.pojo;
+package com.wangzaiplus.test.dto;
 
 import lombok.*;
 
@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Builder
-public class User {
+public class UserDto {
 
     private Integer id;
     private String username;
