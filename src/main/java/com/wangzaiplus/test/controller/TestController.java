@@ -114,9 +114,7 @@ public class TestController {
         List<User> list = Lists.newArrayList();
         for (int i = 0; i < 300; i++) {
             String uuid32 = RandomUtil.UUID32();
-            User user = User.builder().username(uuid32).password(uuid32).password2(uuid32).password3(uuid32)
-                    .password4(uuid32).password5(uuid32).password6(uuid32).password7(uuid32)
-                    .password8(uuid32).password9(uuid32).password10(uuid32).build();
+            User user = User.builder().username(uuid32).password(uuid32).build();
             list.add(user);
         }
 

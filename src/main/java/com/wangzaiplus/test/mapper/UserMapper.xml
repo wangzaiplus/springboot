@@ -2,34 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wangzaiplus.test.mapper.UserMapper" >
     <resultMap id="BaseResultMap" type="com.wangzaiplus.test.pojo.User" >
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="username" property="username" jdbcType="VARCHAR" />
-        <result column="password" property="password" jdbcType="VARCHAR" />
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="password_salt" property="passwordSalt"/>
+        <result column="ip" property="ip"/>
+        <result column="mobile" property="mobile"/>
+        <result column="mail" property="mail"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, username, password
+        id, username, password, password_salt, ip, mobile, mail, type, status, is_deleted, created_time, updated_time
     </sql>
 
     <select id="selectAll" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List" />
-        FROM user
+        FROM t_user
     </select>
 
     <select id="selectOne" parameterType="int" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List" />
-        FROM user
+        FROM t_user
         WHERE id = #{id}
     </select>
 
     <insert id="insert" parameterType="com.wangzaiplus.test.pojo.User">
-        INSERT INTO user(username, password) VALUES (#{username}, #{password})
+        INSERT INTO t_user(username, password) VALUES (#{username}, #{password})
     </insert>
 
     <update id="update" parameterType="com.wangzaiplus.test.pojo.User">
-        UPDATE user SET
+        UPDATE t_user SET
         <if test="username != null">
             username = #{username},
         </if>
@@ -40,29 +49,26 @@
     </update>
 
     <delete id="delete" parameterType="int">
-        DELETE FROM user WHERE id =#{id}
+        DELETE FROM t_user WHERE id =#{id}
     </delete>
 
     <select id="selectByUsernameAndPassword" resultMap="BaseResultMap" parameterType="string">
         SELECT
         <include refid="Base_Column_List" />
-        FROM user
+        FROM t_user
         where username = #{username} and password = #{password}
     </select>
 
     <insert id="batchInsert" parameterType="list">
-        insert into user(username, password, password2, password3, password4, password5, password6,
-        password7, password8, password9, password10)
+        insert into t_user(username, password)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.username}, #{item.password}, #{item.password2}, #{item.password3},
-            #{item.password4}, #{item.password5}, #{item.password6}, #{item.password7},
-            #{item.password8}, #{item.password9}, #{item.password10})
+            (#{item.username}, #{item.password})
         </foreach>
     </insert>
 
     <insert id="batchUpdate" parameterType="list">
-        update user
+        update t_user
         <trim prefix="set" suffixOverrides=",">
             <trim prefix="username=case" suffix="end,">
                 <foreach collection="list" item="item" index="index">
@@ -84,7 +90,7 @@
     <select id="selectByUsername" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List" />
-        FROM user
+        FROM t_user
         where username = #{username}
     </select>
 
