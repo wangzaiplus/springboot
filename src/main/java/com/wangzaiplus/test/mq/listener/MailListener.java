@@ -24,11 +24,13 @@ public class MailListener {
 
     @RabbitListener(queues = RabbitConfig.MAIL_QUEUE_NAME)
     public void consume(Message message, Channel channel) throws IOException {
-        BaseConsumerProxy baseConsumerProxy = new BaseConsumerProxy(mailConsumer, msgLogService);
-        BaseConsumer proxy = (BaseConsumer) baseConsumerProxy.getProxy();
-        if (null != proxy) {
-            proxy.consume(message, channel);
-        }
+        //换成基于spring的代理实现
+//        BaseConsumerProxy baseConsumerProxy = new BaseConsumerProxy(mailConsumer, msgLogService);
+//        BaseConsumer proxy = (BaseConsumer) baseConsumerProxy.getProxy();
+//        if (null != proxy) {
+//            proxy.consume(message, channel);
+//        }
+        mailConsumer.consume(message,channel);
     }
 
 }
