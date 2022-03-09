@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.wangzaiplus.test.annotation.AccessLimit;
 import com.wangzaiplus.test.annotation.ApiIdempotent;
 import com.wangzaiplus.test.common.ServerResponse;
+import com.wangzaiplus.test.dto.UserDto;
 import com.wangzaiplus.test.mapper.MsgLogMapper;
 import com.wangzaiplus.test.mapper.UserMapper;
 import com.wangzaiplus.test.pojo.Mail;
@@ -137,6 +138,12 @@ public class TestController {
         Mail build = Mail.builder().to(mail.getTo()).title(mail.getTitle()).content(mail.getContent()).build();
         boolean send = mailUtil.send(build);
         return ServerResponse.success(send);
+    }
+
+    public static ThreadLocal<UserDto> userDtoThreadLocal = new ThreadLocal<>();
+
+    public static void main(String[] args) {
+        userDtoThreadLocal.set(UserDto.builder().build());
     }
 
 }

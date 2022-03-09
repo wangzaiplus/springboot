@@ -127,6 +127,10 @@ public class FundServiceImpl implements FundService {
     }
 
     private List<FundDto> addRankInfo(List<FundDto> fundDtoList) {
+        if (CollectionUtils.isEmpty(fundDtoList)) {
+            return fundDtoList;
+        }
+
         return fundDtoList.stream().map(dto -> {
             int type = dto.getType();
             Integer id = dto.getId();
