@@ -26,7 +26,7 @@ public class FundController {
     public ServerResponse getFundDtoList(@RequestBody FundDto fundDto) {
         List<FundDto> fundDtoList = FundUtils.getFundDtoList(fundDto.getType());
         fundService.update(fundDtoList);
-        return ServerResponse.success();
+        return ServerResponse.success("success");
     }
 
     @PostMapping("rank")
